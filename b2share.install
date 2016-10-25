@@ -12,14 +12,14 @@
 function b2share_field_schema($field) {
   return array(
     'columns' => array(
-      'url' => array(
+      'doi' => array(
         'type' => 'varchar',
-        'length' => 45,
+        'length' => 128,
         'not null' => FALSE,
       ),
       'pid' => array(
         'type' => 'varchar',
-        'length' => 45,
+        'length' => 128,
         'not null' => FALSE,
       ),
     ),
