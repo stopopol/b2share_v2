@@ -322,7 +322,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#type'  => 'textfield',
        // need to set some kind of default value
        '#default_value'  => isset($items[$delta]['doi']) ? $items[$delta]['doi'] : '',
-       '#prefix' => '<div id="b2share_pid_textfield_div">',
+       '#prefix' => '<div id="b2share_doi_textfield_div">',
        '#suffix' => '</div>',
     );
 
@@ -571,17 +571,20 @@ function b2share_ajax_submit(&$form, &$form_state) {
   drupal_set_message(t('The DOI is '.$doi));
   drupal_set_message(t('The ePIC_PID is '.$pid));
 
+  // examples values for testing, if API isn't working
+  //$form['b2share_fieldset']['doi']['#value'] = 'es funktioniert';
+  //$form['b2share_fieldset']['pid']['#value'] = 'yeah';
 
-  
-  
   $form['b2share_fieldset']['doi']['#value'] = $doi;
   $form['b2share_fieldset']['pid']['#value'] = $pid;
 
-  //return $form; funktioniert nicht
-  return $form['b2share_fieldset']['doi'];
-  //return $form['b2share_fieldset']['pid'];
-  
-
+  return array(
+    '#type' => 'ajax',
+    '#commands' => array(
+      ajax_command_replace("#b2share_doi_textfield_div", render($form['b2share_fieldset']['doi'])),
+      ajax_command_replace("#b2share_pid_textfield_div", render($form['b2share_fieldset']['pid']))
+    )
+  );
 
 }
 
