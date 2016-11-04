@@ -349,7 +349,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
-
+  
   if ($temp_token == 'Example LKR35GP7TG') {
     drupal_set_message(t('You need to set a token.'), 'error');
     return;
@@ -465,7 +465,9 @@ function b2share_ajax_submit(&$form, &$form_state) {
   if ($status_message_visible==TRUE) {
     drupal_set_message(t('The curl status message for creating a draft is '.$ausgabe));
   }
-
+  if ($http_status==401) {
+	  drupal_set_message(t('There is a problem with the authentication. Please check your token.'), 'error');
+  }
 
   // Save response as php variable
   $php_variable = drupal_json_decode($ausgabe);
@@ -558,7 +560,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
     drupal_set_message(t('File was successfully deposited :)'), 'status');
   }
   else {
-   drupal_set_message(t('Oh no. Something went wrong :('), 'error');
+   drupal_set_message(t('Oh no. Something went wrong. No file was deposited :('), 'error');
    return $form['b2share_fieldset']['doi'];
   }
 
@@ -569,12 +571,17 @@ function b2share_ajax_submit(&$form, &$form_state) {
   drupal_set_message(t('The DOI is '.$doi));
   drupal_set_message(t('The ePIC_PID is '.$pid));
 
+
+  
+  
   $form['b2share_fieldset']['doi']['#value'] = $doi;
   $form['b2share_fieldset']['pid']['#value'] = $pid;
 
   //return $form; funktioniert nicht
-  //return $form['b2share_fieldset']['doi'];
+  return $form['b2share_fieldset']['doi'];
   //return $form['b2share_fieldset']['pid'];
+  
+
 
 }
 
@@ -603,6 +610,17 @@ function b2share_save_to_db($form, &$form_state, $entity_id, $entity_type, $form
 
   if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
 
+	//$build_info_state = $form_state['build_info'];
+	//$form_id_state = $build_info_state['values'];
+	//drupal_set_message(t('form_id is '.$form_id_state));
+	//drupal_set_message(t('entity_id is '.$entity_id));
+	//$form_id_state = $form_state['values'];
+	//foreach($form_id_state as $key => $value)
+	//{
+	//  echo $key." has the value". $value;
+	//}
+	//print_r($form);
+  
     // how can i find out the name of the b2share field?
     $insert = db_insert('field_data_field_b2share3')
       -> fields(array(
