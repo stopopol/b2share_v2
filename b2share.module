@@ -568,25 +568,18 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $files_content = $php_variable['metadata'];
   $pid = $files_content['ePIC_PID'];
   $doi = $files_content['DOI'];
-  drupal_set_message(t('The DOI is '.$doi));
-  drupal_set_message(t('The ePIC_PID is '.$pid));
-
-  // examples values for testing, if API isn't working
-  //$form['b2share_fieldset']['doi']['#value'] = 'it works';
-  //$form['b2share_fieldset']['pid']['#value'] = 'yeah';
+  //drupal_set_message(t('The DOI is '.$doi));
+  //drupal_set_message(t('The ePIC_PID is '.$pid));
 
   $form['b2share_fieldset']['doi']['#value'] = $doi;
   $form['b2share_fieldset']['pid']['#value'] = $pid;
-
-//return $form['b2share_fieldset']['pid'];
-  
   
   return array(
     '#type' => 'ajax',
     '#commands' => array(
       ajax_command_replace("#b2share_doi_textfield_div", render($form['b2share_fieldset']['doi'])),
       ajax_command_replace("#b2share_pid_textfield_div", render($form['b2share_fieldset']['pid'])),
-	  ajax_command_prepend(NULL, theme('status_messages')), 
+	  ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')), 
     )
   ); 
 
