@@ -583,8 +583,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
     )
   ); 
 
- 
-  
   
 }
 
