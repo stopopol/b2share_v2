@@ -208,7 +208,7 @@ function b2share_field_settings_form($field, $instance, $has_data) {
       case 'b2share_formatter' :
         foreach ($items as $delta => $item) {
           if (isset($item['doi'])) {
-            $element[$delta]['#markup'] = '<a href="' . $item['doi'].'"target="_blank">'. $item['doi'] . '</a>' . '   PID: ' . $item['pid'];
+            $element[$delta]['#markup'] = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>' . '   DOI: ' . $item['doi'];
           }
         }
         break;
@@ -554,7 +554,14 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
   }
   else {
    drupal_set_message(t('Oh no. Something went wrong. No file was deposited :('), 'error');
-   return $form['b2share_fieldset']['doi'];
+    return array(
+    '#type' => 'ajax',
+    '#commands' => array(
+      ajax_command_replace("#b2share_doi_textfield_div", render($form['b2share_fieldset']['doi'])),
+      ajax_command_replace("#b2share_pid_textfield_div", render($form['b2share_fieldset']['pid'])),
+	  ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')), 
+    )
+  ); 
   }
 
   $php_variable = drupal_json_decode($ausgabe);
@@ -596,7 +603,7 @@ function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
 }
 
 
-function b2share_save_to_db($form, &$form_state, $entity_id, $entity_type, $form_id ) {
+function b2share_save_to_db($form, &$form_state) {
   
  $values = array(
    'doi' => $form_state['values']['b2share_fieldset']['doi'],
@@ -605,22 +612,20 @@ function b2share_save_to_db($form, &$form_state, $entity_id, $entity_type, $form
 
   if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
 
-	//$form_state['submit_handlers']
-	//$build_info_state = $form_state['build_info'];
 	$form_state_values = $form_state['values'];
-	
-	//drupal_set_message(t('entity_id is '.$entity_id));
 	$form_id_state = $form_state_values['b2share_fieldset'];
 	
 	$db_name_b2share = $form_id_state['database_field_name'];
-	//drupal_set_message(t('the name of the field is '.$db_name_b2share));
-	
 	$b2share_table_name = 'field_data_'.$db_name_b2share;
 	$b2share_column_doi = $db_name_b2share.'_doi';
 	$b2share_column_pid = $db_name_b2share.'_pid';
+	
+	/*
+	drupal_set_message(t('the name of the field is '.$db_name_b2share));
+	drupal_set_message(t('the table_name is '.$b2share_table_name));
+	drupal_set_message(t('the doi_column is '.$b2share_column_doi));
+	drupal_set_message(t('the pid_column is '.$b2share_column_pid)); */
  
- 
-    // how can i find out the name of the b2share field?
     $insert = db_insert($b2share_table_name)
       -> fields(array(
         // and columns
@@ -644,13 +649,17 @@ function b2share_save_to_db($form, &$form_state, $entity_id, $entity_type, $form
  * Implements hook_token_info().
  */
 
- /*
+ 
 function b2share_token_info() {
 
+  $node['doi'] = array(
+    'name' => t("DOI"),
+    'description' => t("B2Share Dataset DOI"),
+  );
   // Define token value, body_trim is the token will be used as [node:body_trim]
-  $b2share['deposit_url'] =  array(
-    'name' => t("B2Share deposit url"),
-    'description' => t("Provides deposit url"),
+  $node['pid'] =  array(
+    'name' => t("PID"),
+    'description' => t("B2Share Dataset PID"),
   );
 
   // Return associative array of tokens & token types
@@ -659,7 +668,7 @@ function b2share_token_info() {
       'node' => $b2share,
     ),
   );
-} */
+} 
 
 /**
  * Implements hook_tokens().
