@@ -568,13 +568,13 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
 	
   }
   else {
-   drupal_set_message(t('Oh no. Something went wrong. No file was deposited :('), 'error');
-   return array(
-	'#type' => 'ajax',
-    '#commands' => array(
-		ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')), 
-    )
-  ); 
+	drupal_set_message(t('Oh no. Something went wrong. No file was deposited :('), 'error');
+	return array(
+		'#type' => 'ajax',
+		'#commands' => array(
+			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')), 
+		)
+	); 
   }
 
 }
@@ -583,12 +583,10 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
  * Implements hook_field_is_empty().
  */
 function b2share_field_is_empty($item, $field) {
-   // If there's nothing in $item['b2share'].
-   if (empty($item['b2share_fieldset']['pid'])) {
-      return TRUE;
+	if (empty($item['b2share_fieldset']['pid'])) {
+		return TRUE;
     }
-  return FALSE;
-
+	return FALSE;
 }
 
 function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
