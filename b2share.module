@@ -257,7 +257,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#title' => 'Title',
        '#description' => t('Enter the title the dataset should have on B2Share.'),
        '#type'  => 'textfield',
-       // need to set some kind of default value
        '#default_value'  => '',
        '#prefix' => '<div id="b2share_creator_textfield_div">',
        '#suffix' => '</div>',
@@ -267,7 +266,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#title' => 'Description',
        '#description' => t('Put the description of the dataset here.'),
        '#type'  => 'textfield',
-       // need to set some kind of default value
        '#default_value'  => '',
        '#prefix' => '<div id="b2share_description_textfield_div">',
        '#suffix' => '</div>',
@@ -277,7 +275,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#title' => 'Creator',
        '#description' => t('Put the name of the creator here.'),
        '#type'  => 'textfield',
-       // need to set some kind of default value
        '#default_value'  => '',
        '#prefix' => '<div id="b2share_creator_textfield_div">',
        '#suffix' => '</div>',
@@ -554,13 +551,11 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
     drupal_set_message(t('File was successfully deposited :)'), 'status');
 	$php_variable = drupal_json_decode($ausgabe);
 	$files_content = $php_variable['metadata'];
-	$pid = $files_content['ePIC_PID'];
-	$doi = $files_content['DOI'];
-	//drupal_set_message(t('The DOI is '.$doi));
-	//drupal_set_message(t('The ePIC_PID is '.$pid));
+	//drupal_set_message(t('The DOI is '.$files_content['DOI']));
+	//drupal_set_message(t('The ePIC_PID is '.$files_content['ePIC_PID']));
 
-	$form['b2share_fieldset']['doi']['#value'] = $doi;
-	$form['b2share_fieldset']['pid']['#value'] = $pid;
+	$form['b2share_fieldset']['doi']['#value'] = $files_content['DOI'];
+	$form['b2share_fieldset']['pid']['#value'] = $files_content['ePIC_PID'];
 	
 	return array(
 		'#type' => 'ajax',
@@ -707,12 +702,14 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
   $property['property info']['pid'] = array(
     'type' => 'text',
     'label' => t('PID of B2Share field'),
+	'getter callback' => 'entity_metadata_field_text_get',
 	'setter callback' => 'entity_property_verbatim_set',
   );
   
   $property['property info']['doi'] = array(
     'type' => 'text',
     'label' => t('DOI of B2Share field'),
+	'getter callback' => 'entity_metadata_field_text_get',
 	'setter callback' => 'entity_property_verbatim_set',
   );
 
