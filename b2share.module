@@ -162,7 +162,7 @@ function b2share_form_metadata($form, &$form_state) {
         'default_widget'  =>  'b2share_widget',
         'default_formatter'  =>  'b2share_formatter',
         'property_type' => 'text', // ???
-        'property_callbacks' => array('b2share_field_property_callback'), // ???
+        'property_callbacks' => array('b2share_field_property_callback'), // maybe for integration of the entity API?
       )
     );
   }
@@ -695,20 +695,42 @@ function b2share_tokens($type, $tokens, array $data = array(), array $options = 
  */
 function b2share_field_property_callback(&$info, $entity_type, $field, $instance, $field_type) {
   $property = &$info[$entity_type]['bundles'][$instance['bundle']]['properties'][$field['field_name']];
+  
   $property['getter callback'] = 'entity_metadata_field_verbatim_get';
   $property['setter callback'] = 'entity_metadata_field_verbatim_set';
-  $property['property info']['pid'] = array(
-    'type' => 'text',
-    'label' => t('PID of B2Share field'),
-	'getter callback' => 'entity_metadata_field_text_get',
-	'setter callback' => 'entity_property_verbatim_set',
+  unset($property['query callback']);
+  
+  $property['property info'] = array(
+    'doi' => array(
+        'type' => 'text',
+        'label' => t('DOI'),
+		'description' => t('Subfield of Field "'.$field['field_name'].'".'),
+        'sanitized' => TRUE,
+        'getter callback' => 'entity_metadata_field_text_get',
+        'setter callback' => 'entity_property_verbatim_set',
+        //'setter permission' => 'administer nodes',
+        'raw getter callback' => 'entity_property_verbatim_get',
+    ),
+    'pid' => array(
+        'type' => 'text',
+        'label' => t('PID'),
+		'description' => t('Subfield of Field "'.$field['field_name'].'".'),
+        'sanitized' => TRUE,
+        'getter callback' => 'entity_metadata_field_text_get',
+        'setter callback' => 'entity_property_verbatim_set',
+        //'setter permission' => 'administer nodes',
+        'raw getter callback' => 'entity_property_verbatim_get',
+    ),
+	/*
+    'format' => array(
+        'type' => 'token',
+        'label' => t('Text format'),
+        'options list' => 'entity_metadata_field_text_formats',
+        'getter callback' => 'entity_property_verbatim_get',
+    ), */
+  
   );
   
-  $property['property info']['doi'] = array(
-    'type' => 'text',
-    'label' => t('DOI of B2Share field'),
-	'getter callback' => 'entity_metadata_field_text_get',
-	'setter callback' => 'entity_property_verbatim_set',
-  );
+
 
 }
