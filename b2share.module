@@ -161,8 +161,8 @@ function b2share_form_metadata($form, &$form_state) {
         'description'  =>  t('Provides an interface to use the B2Share API'),
         'default_widget'  =>  'b2share_widget',
         'default_formatter'  =>  'b2share_formatter',
-        'property_type' => 'text', // ???
-        'property_callbacks' => array('b2share_field_property_callback'), // maybe for integration of the entity API?
+        'property_type' => 'text', 
+        'property_callbacks' => array('b2share_field_property_callback'), 
       )
     );
   }
@@ -615,7 +615,8 @@ function b2share_save_to_db($form, &$form_state) {
 	drupal_set_message(t('the name of the field is '.$db_name_b2share));
 	drupal_set_message(t('the table_name is '.$b2share_table_name));
 	drupal_set_message(t('the doi_column is '.$b2share_column_doi));
-	drupal_set_message(t('the pid_column is '.$b2share_column_pid)); */
+	drupal_set_message(t('the pid_column is '.$b2share_column_pid)); 
+	*/
  
     $insert = db_insert($b2share_table_name)
       -> fields(array(
@@ -690,6 +691,8 @@ function b2share_tokens($type, $tokens, array $data = array(), array $options = 
   return $replacements;
 }
 
+// rules integration, fields are visible but values can't be set and its value can't copied to another field, no idea why
+
 /**
  * Property callback.
  */
@@ -698,28 +701,28 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
   
   $property['getter callback'] = 'entity_metadata_field_verbatim_get';
   $property['setter callback'] = 'entity_metadata_field_verbatim_set';
-  unset($property['query callback']);
+  
   
   $property['property info'] = array(
     'doi' => array(
         'type' => 'text',
         'label' => t('DOI'),
 		'description' => t('Subfield of Field "'.$field['field_name'].'".'),
-        'sanitized' => TRUE,
-        'getter callback' => 'entity_metadata_field_text_get',
+        //'sanitized' => TRUE,
+        'getter callback' => 'entity_property_verbatim_get',
         'setter callback' => 'entity_property_verbatim_set',
         //'setter permission' => 'administer nodes',
-        'raw getter callback' => 'entity_property_verbatim_get',
+        //'raw getter callback' => 'entity_property_verbatim_get',
     ),
     'pid' => array(
         'type' => 'text',
         'label' => t('PID'),
 		'description' => t('Subfield of Field "'.$field['field_name'].'".'),
-        'sanitized' => TRUE,
-        'getter callback' => 'entity_metadata_field_text_get',
+        //'sanitized' => TRUE,
+        'getter callback' => 'entity_property_verbatim_get',
         'setter callback' => 'entity_property_verbatim_set',
         //'setter permission' => 'administer nodes',
-        'raw getter callback' => 'entity_property_verbatim_get',
+        //'raw getter callback' => 'entity_property_verbatim_get',
     ),
 	/*
     'format' => array(
@@ -731,6 +734,6 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
   
   );
   
-
+  unset($property['query callback']);
 
 }
