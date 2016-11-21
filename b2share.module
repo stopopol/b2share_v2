@@ -192,13 +192,26 @@ function b2share_field_settings_form($field, $instance, $has_data) {
  // Describes B2Share Formatter
  function b2share_field_formatter_info() {
     return array(
+	
       'b2share_formatter'  => array(
-      'label'  => t('Simple B2Share Field Formatter'),
+      'label'  => t('B2Share Field Formatter'),
       'field types'  => array('b2share'),
       ),
+	  
+      'b2share_pid_formatter'  => array(
+      'label'  => t('B2Share PID Field Formatter'),
+      'field types'  => array('b2share'),
+      ),
+	  
+	  'b2share_doi_formatter'  => array(
+      'label'  => t('B2Share DOI Field Formatter'),
+      'field types'  => array('b2share'),
+      ),
+	  
     );
   }
 
+  
   /**
    * Implements hook_field_formatter_view().
    */
@@ -209,6 +222,20 @@ function b2share_field_settings_form($field, $instance, $has_data) {
         foreach ($items as $delta => $item) {
           if (isset($item['doi'])) {
             $element[$delta]['#markup'] = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>' . '   DOI: ' . $item['doi'];
+          }
+        }
+        break;
+	   case 'b2share_pid_formatter' :
+        foreach ($items as $delta => $item) {
+          if (isset($item['pid'])) {
+            $element[$delta]['#markup'] = $item['pid'];
+          }
+        }
+        break;
+		case 'b2share_doi_formatter' :
+        foreach ($items as $delta => $item) {
+          if (isset($item['doi'])) {
+            $element[$delta]['#markup'] = $item['doi'];
           }
         }
         break;
