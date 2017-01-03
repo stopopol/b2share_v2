@@ -85,6 +85,14 @@ function b2share_form($form, &$form_state) {
         '#default_value'  => variable_get('ignore_outdate_certificates', 0),
       );
 
+      $form['save_dois'] = array(
+         '#type'  => 'checkbox',
+         '#title'  => 'Save DOIs?',
+         '#description' => 'Should DOIs be saved? (This is only possible if the b2share instance issues DOIs)',
+         '#required'  => FALSE,
+         '#default_value'  => variable_get('save_dois', 1),
+       );
+
   function _is_curl_installed() {
     if (in_array  ('curl', get_loaded_extensions())) {
         return true;
@@ -335,14 +343,17 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       drupal_get_path('module', 'b2share') . '/css/b2share.css',
     );
 
-    $form['b2share_fieldset']['doi'] = array(
-       '#title' => 'DOI',
-       '#description' => t('Put the DOI here or have one generated.'),
-       '#type'  => 'textfield',
-       '#default_value'  => isset($items[$delta]['doi']) ? $items[$delta]['doi'] : '',
-       '#prefix' => '<div id="b2share_doi_textfield_div">',
-       '#suffix' => '</div>',
-    );
+    $save_doi_value = variable_get('save_dois');
+    if ($save_doi_value == 1){
+      $form['b2share_fieldset']['doi'] = array(
+         '#title' => 'DOI',
+         '#description' => t('Put the DOI here or have one generated.'),
+         '#type'  => 'textfield',
+         '#default_value'  => isset($items[$delta]['doi']) ? $items[$delta]['doi'] : '',
+         '#prefix' => '<div id="b2share_doi_textfield_div">',
+         '#suffix' => '</div>',
+      );
+    }
 
     $form['b2share_fieldset']['pid'] = array(
        '#title' => 'PID',
@@ -569,22 +580,26 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
 
   if ($http_status == 200) {
     drupal_set_message(t('File was successfully deposited :)'), 'status');
-	$php_variable = drupal_json_decode($ausgabe);
-	$files_content = $php_variable['metadata'];
-	//drupal_set_message(t('The DOI is '.$files_content['DOI']));
-	//drupal_set_message(t('The ePIC_PID is '.$files_content['ePIC_PID']));
+	  $php_variable = drupal_json_decode($ausgabe);
+	  $files_content = $php_variable['metadata'];
+	  //drupal_set_message(t('The DOI is '.$files_content['DOI']));
+	  //drupal_set_message(t('The ePIC_PID is '.$files_content['ePIC_PID']));
 
-	$form['b2share_fieldset']['doi']['#value'] = $files_content['DOI'];
-	$form['b2share_fieldset']['pid']['#value'] = $files_content['ePIC_PID'];
+    $save_doi_value = variable_get('save_dois');
+    if ($save_doi_value == 1){
+        $form['b2share_fieldset']['doi']['#value'] = $files_content['DOI'];
+    }
 
-	return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_doi_textfield_div", render($form['b2share_fieldset']['doi'])),
-			ajax_command_replace("#b2share_pid_textfield_div", render($form['b2share_fieldset']['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+	  $form['b2share_fieldset']['pid']['#value'] = $files_content['ePIC_PID'];
+
+	  return array(
+		    '#type' => 'ajax',
+		    '#commands' => array(
+			      ajax_command_replace("#b2share_doi_textfield_div", render($form['b2share_fieldset']['doi'])),
+			      ajax_command_replace("#b2share_pid_textfield_div", render($form['b2share_fieldset']['pid'])),
+			      ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+		    )
+	  );
 
   }
   else {
@@ -616,10 +631,19 @@ function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
 
 function b2share_save_to_db($form, &$form_state) {
 
- $values = array(
-   'doi' => $form_state['values']['b2share_fieldset']['doi'],
-   'pid' => $form_state['values']['b2share_fieldset']['pid']
- );
+  $save_doi_value = variable_get('save_dois');
+  if ($save_doi_value == 1){
+    $values = array(
+      'doi' => $form_state['values']['b2share_fieldset']['doi'],
+      'pid' => $form_state['values']['b2share_fieldset']['pid']
+    );
+  }
+
+  else {
+    $values = array(
+      'pid' => $form_state['values']['b2share_fieldset']['pid']
+    );
+  }
 
   if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
 
