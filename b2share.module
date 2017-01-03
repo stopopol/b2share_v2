@@ -403,10 +403,10 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
   $md_creator = $form_state['values']['b2share_fieldset']['creator'];
 
   if ($open_access == 1){
-    $open_access = true;
+    $open_access = "true";
   }
   else {
-    $open_access = false;
+    $open_access = "false";
   }
 
   //drupal_set_message(t('The open access is '.$open_access));
@@ -417,13 +417,6 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
   //$timestamp =  date("Y-m-d H:i:s");
   //$md_description = 'My first dataset ingested using the API and curl. Timestamp: '.$timestamp;
 
-  $metadata_array = array(
-   'community' => variable_get('b2share_domain'),
-   'title' => $md_title,
-   'creator' => $md_creator,
-   'description' => $md_description,
-   'open_access' => $open_access,
-  );
 
   // Build the query.
   // Create a new deposition
@@ -433,18 +426,16 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
   $url = $base_url.'api/records/?access_token='.$temp_token;
 
   drupal_set_message(t('The url is '.$url));
+  drupal_set_message(t('open_access is '.$open_access));
 
   if(!$url || !is_string($url) || ! preg_match('/^http(s)?:\/\/[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(\/.*)?$/i', $url)){
     drupal_set_message(t('Bad url'));
   }
 
-  $params = array(
-    'title' => $md_title,
-    'community' => variable_get('b2share_domain'),
-    'open_access' => $open_access,
-  );
-  $params_json = json_encode($params);
-  //drupal_set_message(t('The params_json is '.$params_json));
+  $community_value = variable_get('b2share_domain');
+
+  $params_json = '{"titles":[{"title":"'.$md_title.'"}],"community":"'.$community_value.'","open_access":'.$open_access.'}';
+  drupal_set_message(t('The params_json is '.$params_json));
 
   // curl
   $ch = curl_init();
