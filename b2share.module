@@ -425,8 +425,8 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
   $base_url = rtrim($base_url, '/') . '/';
   $url = $base_url.'api/records/?access_token='.$temp_token;
 
-  drupal_set_message(t('The url is '.$url));
-  drupal_set_message(t('open_access is '.$open_access));
+  //drupal_set_message(t('The url is '.$url));
+  //drupal_set_message(t('open_access is '.$open_access));
 
   if(!$url || !is_string($url) || ! preg_match('/^http(s)?:\/\/[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(\/.*)?$/i', $url)){
     drupal_set_message(t('Bad url'));
@@ -434,8 +434,8 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
 
   $community_value = variable_get('b2share_domain');
 
-  $params_json = '{"titles":[{"title":"'.$md_title.'"}],"community":"'.$community_value.'","open_access":'.$open_access.'}';
-  drupal_set_message(t('The params_json is '.$params_json));
+  $params_json = '{"titles":[{"title":"'.$md_title.'"}],"community":"'.$community_value.'","open_access":'.$open_access.',"community_specific" : {}}';
+  //drupal_set_message(t('The params_json is '.$params_json));
 
   // curl
   $ch = curl_init();
@@ -524,7 +524,7 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
     drupal_set_message(t('The curl status message for depositing the file is '.$ausgabe));
   }
 
-  $patch_content='[{"op": "add", "path":"/publication_state", "value": "published"}]';
+  $patch_content='[{"op": "add", "path":"/publication_state", "value": "submitted"}]';
 
   $publish_url = $record_id.'?access_token='.$temp_token;
   //drupal_set_message(t('The publish_url is '.$publish_url));
