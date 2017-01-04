@@ -228,15 +228,20 @@ function b2share_field_settings_form($field, $instance, $has_data) {
     switch ($display['type']) {
       case 'b2share_formatter' :
         foreach ($items as $delta => $item) {
+          if (isset($item['pid'])) {
+            $pid_content = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>';
+            $element[$delta]['#markup'] = $pid_content;
+          }
           if (isset($item['doi'])) {
-            $element[$delta]['#markup'] = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>' . '   DOI: ' . $item['doi'];
+            $pid_content =   $pid_content.'  ';
+            $element[$delta]['#markup'] = $pid_content. 'DOI: ' . $item['doi'];
           }
         }
         break;
 	   case 'b2share_pid_formatter' :
         foreach ($items as $delta => $item) {
           if (isset($item['pid'])) {
-            $element[$delta]['#markup'] = $item['pid'];
+            $element[$delta]['#markup'] = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid']. '</a>';
           }
         }
         break;
