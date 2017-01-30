@@ -93,7 +93,7 @@ function b2share_form($form, &$form_state) {
          '#default_value'  => variable_get('save_dois', 1),
        );
 
-  function _is_curl_installed() {
+  function b2share_is_curl_installed() {
     if (in_array  ('curl', get_loaded_extensions())) {
         return true;
     }
@@ -102,7 +102,7 @@ function b2share_form($form, &$form_state) {
     }
   }
 
-  function output_status_messages() {
+  function b2share_output_status_messages() {
     $http_code_visible = variable_get('http_code_visible');
     $status_message_visible = variable_get('status_message_visible');
     if ($http_code_visible==1) {
@@ -112,7 +112,7 @@ function b2share_form($form, &$form_state) {
     }
   }
 
-  function ignore_certificates() {
+  function b2share_ignore_certificates() {
     $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
     if ($ignore_outdate_certificates==TRUE) {
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -121,7 +121,7 @@ function b2share_form($form, &$form_state) {
   }
 
   // Ouput text to user based on test
-  if (_is_curl_installed()) {
+  if (b2share_is_curl_installed()) {
     drupal_set_message(t('Curl is installed.'));
   } else {
     drupal_set_message(t('Curl is NOT installed.'), 'error');
@@ -197,6 +197,35 @@ function b2share_field_settings_form($field, $instance, $has_data) {
   return $form;
 }
 
+/**
+ * Implements hook_field_instance_settings_form().
+ */
+function b2share_field_instance_settings_form($field, $instance) {
+  $settings = $instance['settings'];
+
+  $form['collapsible'] = array(
+    '#type' => 'radios',
+    '#title' => t('Is this field collapsible?'),	
+	'#default_value' => isset($settings['collapsible']) ? $settings['collapsible'] : 'Not collapsible',
+    '#options' => array(
+      t('Collapsible'),
+      t('Not collapsible'),
+    ),
+  );
+
+   $form['collapsed'] = array(
+    '#type' => 'radios',
+    '#title' => t('Is this field collapsed?'),
+    '#default_value' => isset($settings['collapsed']) ? $settings['collapsed'] : 'Not collapsed',
+    '#options' => array(
+      t('Collapsed'),
+      t('Not collapsed'),
+    ),
+  );
+  
+  return $form;
+}
+
  // Describes B2Share Formatter
  function b2share_field_formatter_info() {
     return array(
@@ -266,19 +295,30 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
   case 'b2share':
 
 	$b2share_fieldname = $field['field_name'];
-
+	
+	$settings = $instance['settings'];
+	
+	if ($settings['collapsible'] == 0): $collapsable = TRUE;
+	elseif ($settings['collapsible'] == 1):	$collapsable = FALSE;
+	else: $collapsable = TRUE;
+	endif;
+	
+	if ($settings['collapsed'] == 0): $collapsed = TRUE;
+	elseif ($settings['collapsed'] == 1):	$collapsed = FALSE;
+	else: $collapsed = TRUE;
+	endif;
+	
     $form['b2share_fieldset'] = array(
       '#type'  => 'fieldset',
       '#title'  => t('Publish data on B2Share'),
-      '#collapsible'  => FALSE,
+      '#collapsible'  => $collapsable,
+	  '#collapsed' => $collapsed,
       '#tree'  => TRUE,
     );
 
 	$form['b2share_fieldset']['database_field_name'] = array(
        '#type'  => 'hidden',
        '#default_value'  => $b2share_fieldname,
-       //'#prefix' => '<div id="b2share_creator_textfield_div">',
-       //'#suffix' => '</div>',
     );
 
     $form['b2share_fieldset']['file_select'] = array(
@@ -288,7 +328,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#default_value' => (isset($foo->picture->fid) ? $foo->picture->fid : ''),
       '#upload_location' => variable_get('picture_upload_location'),
       '#upload_validators' => array(
-        'file_validate_extensions' => array('gif png jpg jpeg txt csv'),
+        //'file_validate_extensions' => array('gif png jpg jpeg txt csv'),
         'file_validate_size' => array('MAX_FILE_SIZE'*1024*1024),
       ),
     );
@@ -298,8 +338,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#description' => t('Enter the title the dataset should have on B2Share.'),
        '#type'  => 'textfield',
        '#default_value'  => '',
-       '#prefix' => '<div id="b2share_creator_textfield_div">',
-       '#suffix' => '</div>',
     );
 
     $form['b2share_fieldset']['description'] = array(
@@ -307,8 +345,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#description' => t('Put the description of the dataset here.'),
        '#type'  => 'textfield',
        '#default_value'  => '',
-       '#prefix' => '<div id="b2share_description_textfield_div">',
-       '#suffix' => '</div>',
     );
 
     $form['b2share_fieldset']['creator'] = array(
@@ -316,8 +352,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#description' => t('Put the name of the creator here.'),
        '#type'  => 'textfield',
        '#default_value'  => '',
-       '#prefix' => '<div id="b2share_creator_textfield_div">',
-       '#suffix' => '</div>',
     );
 
     $form['b2share_fieldset']['open_access'] = array(
@@ -344,9 +378,10 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       drupal_get_path('module', 'b2share') . '/js/b2share.js',
     );
 
+	/* Attaches custom css to module*/
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'b2share') . '/css/b2share.css',
-    );
+    ); 
 
     $save_doi_value = variable_get('save_dois');
     if ($save_doi_value == 1){
@@ -590,10 +625,11 @@ function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
 
   if ($http_status == 200) {
     drupal_set_message(t('File was successfully deposited :)'), 'status');
+	  drupal_set_message(t('The return message is '.$ausgabe));	
 	  $php_variable = drupal_json_decode($ausgabe);
 	  $files_content = $php_variable['metadata'];
-	  //drupal_set_message(t('The DOI is '.$files_content['DOI']));
-	  //drupal_set_message(t('The ePIC_PID is '.$files_content['ePIC_PID']));
+	  drupal_set_message(t('The DOI is '.$files_content['DOI']));
+	  drupal_set_message(t('The ePIC_PID is '.$files_content['ePIC_PID']));
 
     $save_doi_value = variable_get('save_dois');
     if ($save_doi_value == 1){
@@ -729,13 +765,13 @@ function b2share_tokens($type, $tokens, array $data = array(), array $options = 
         case 'doi':
           // Work out the value of our token.
           $value = 'DOI TEST';
-          // Give our token it's value!
+          // Give our token its value!
           $replacements[$original] = $value;
           break;
 		case 'pid':
 		  // Work out the value of our token.
           $value = 'PID TEST';
-          // Give our token it's value!
+          // Give our token its value!
           $replacements[$original] = $value;
           break;
       }
