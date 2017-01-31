@@ -323,7 +323,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     $form['b2share_fieldset'] = array(
       '#type'  => 'fieldset',
       '#title'  => t('Publish data on B2Share'),
-      '#collapsible'  => $collapsable,
+      '#collapsible'  => $collapsible,
 	  '#collapsed' => $collapsed,
       '#tree'  => TRUE,
     );
