@@ -423,9 +423,11 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 
 function b2share_ajax_submit(&$form, &$form_state) {
 
+  // clean previous messages
+ 
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
-
+ 
   if ($temp_token == 'Example LKR35GP7TG') {
     drupal_set_message(t('You need to set a token.'), 'error');
     return;
