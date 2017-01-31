@@ -442,12 +442,13 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // Fetch metadata information and file
 
   // Load file from select form
-  $file = file_load($form_state['values']['b2share_fieldset']['file_select']);
-
+  $check_file = $form_state['values']['b2share_fieldset']['file_select'];
+  $file = file_load($check_file['fid']);
+  
   if ((empty($file)) == true) {
     form_set_error('[b2share_fieldset][file_select]', t('Please select a file'));
     return $form['b2share_fieldset']['pid'];
-  }
+  } 
 
   // get file information
   $uri = $file->uri;
@@ -473,7 +474,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
   //timestamp
   //$timestamp =  date("Y-m-d H:i:s");
   //$md_description = 'My first dataset ingested using the API and curl. Timestamp: '.$timestamp;
-
 
   // Build the query.
   // Create a new deposition
@@ -524,7 +524,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   $headerSent = curl_getinfo($ch, CURLINFO_HEADER_OUT );
 
-  if ($ausgabe === false) $ausgabe = curl_error($ch);
+  if ($ausgabe === false) {$ausgabe = curl_error($ch);}
 
   curl_close($ch);
 
@@ -550,7 +550,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   // PID of deposition
   $upload_url = $draft_id.'/'.$base_file_name.'?access_token='.$temp_token;
-  //drupal_set_message(t('The upload_url is '.$upload_url));
 
   // deposit file
   $ch = curl_init($upload_url);
@@ -574,7 +573,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   $headerSent = curl_getinfo($ch, CURLINFO_HEADER_OUT);
 
-  curl_close($ch);
+  curl_close($ch); 
 
   // Return status message
   //drupal_set_message(t('The curl header sent is '.$headerSent));
@@ -620,7 +619,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // Return status message
   //drupal_set_message(t('The curl header sent is '.$headerSent));
 
-
   if ($http_code_visible==TRUE) {
     drupal_set_message(t('The publishing status code is '.$http_status));
   }
@@ -628,14 +626,11 @@ function b2share_ajax_submit(&$form, &$form_state) {
     drupal_set_message(t('The curl status message for publishing is '.$ausgabe));
   }
 
-
   if ($http_status == 200) {
     drupal_set_message(t('File was successfully deposited :)'), 'status');
 	  drupal_set_message(t('The return message is '.$ausgabe));	
 	  $php_variable = drupal_json_decode($ausgabe);
 	  $files_content = $php_variable['metadata'];
-	  //drupal_set_message(t('The DOI is '.$files_content['DOI']));
-	  //drupal_set_message(t('The ePIC_PID is '.$files_content['ePIC_PID']));
 
     $save_doi_value = variable_get('save_dois');
     if ($save_doi_value == 1){
@@ -643,7 +638,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 			$form['b2share_fieldset']['doi']['#value'] = $files_content['DOI'];
 		}
     }
-	  if (isset($files_content['ePIC_PID'])){
+	if (isset($files_content['ePIC_PID'])){
 		$form['b2share_fieldset']['pid']['#value'] = $files_content['ePIC_PID'];
 	  
 		return array(
@@ -654,16 +649,16 @@ function b2share_ajax_submit(&$form, &$form_state) {
 				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 			)
 		  );
-	  }
-	  else {
-		  drupal_set_message(t('The file was deposited, but no PID was returned :/'), 'error');
-		  return array(
-				'#type' => 'ajax',
-				'#commands' => array(
-					ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-				)
-			);
-	  }
+	}
+	else {
+		drupal_set_message(t('The file was deposited, but no PID was returned :/'), 'error');
+		return array(
+			'#type' => 'ajax',
+			'#commands' => array(
+				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+			)
+		);
+	}
 
   }
   else {
@@ -674,7 +669,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 		)
 	);
-  }
+  } 
 
 }
 
