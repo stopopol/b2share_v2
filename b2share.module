@@ -412,6 +412,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#suffix' => '</div>',
     );
 
+    $form['#groups']['b2share_fieldset']->format_settings['instance_settings']['id'] = 'b2share_field';
     break;
   }
   return $element;
