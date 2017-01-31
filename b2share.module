@@ -297,7 +297,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 	$b2share_fieldname = $field['field_name'];
 	
 	$settings = $instance['settings'];
-
+	
 	if (!isset($settings['collapsible'])){
 		$collapsible = TRUE;
 	}
@@ -308,7 +308,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 		$collapsable = FALSE;
 	}
 
-	
 	if (!isset($settings['collapsed'])){
 		$collapsed = FALSE;
 	}
@@ -319,7 +318,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 		$collapsed = FALSE;
 	}
 
-		
     $form['b2share_fieldset'] = array(
       '#type'  => 'fieldset',
       '#title'  => t('Publish data on B2Share'),
@@ -328,7 +326,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#tree'  => TRUE,
     );
 
-	$form['database_field_name'] = array(
+	$form['b2share_fieldset']['database_field_name'] = array(
        '#type'  => 'hidden',
        '#default_value'  => $b2share_fieldname,
     ); 
@@ -412,7 +410,8 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#suffix' => '</div>',
     );
 
-    $form['#groups']['b2share_fieldset']->format_settings['instance_settings']['id'] = 'b2share_field';
+	$form['#groups']['b2share_fieldset']->format_settings['instance_settings']['id'] = 'b2share_field';
+	
     break;
   }
   return $element;
@@ -422,9 +421,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
  * Functions that are being called - communication with the B2Share API happens here
  */
 
-function b2share_ajax_submit(&$form, &$form_state, $b2share_fieldname) {
-
-  //drupal_set_message(t('b2share fieldname is '.$b2share_fieldname));
+function b2share_ajax_submit(&$form, &$form_state) {
 
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
@@ -719,16 +716,16 @@ function b2share_save_to_db($form, &$form_state) {
 
     $insert = db_insert($b2share_table_name)
       -> fields(array(
-        // and columns
-       $b2share_column_doi => $values['doi'],
-       $b2share_column_pid => $values['pid'],
-       'entity_id' => $form_state['node']->nid,
-       'entity_type' => 'node',
-       'bundle' => $form_state['node']->type,
-       'delta' => 0,
-       'language' => 'und',
-     ))
-     ->execute();
+			// and columns
+		   $b2share_column_doi => $values['doi'],
+		   $b2share_column_pid => $values['pid'],
+		   'entity_id' => $form_state['node']->nid,
+		   'entity_type' => 'node',
+		   'bundle' => $form_state['node']->type,
+		   'delta' => 0,
+		   'language' => 'und',
+		))
+      ->execute();
 
   }
 }
