@@ -305,7 +305,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 	
 	if ($settings['collapsed'] == 0): $collapsed = TRUE;
 	elseif ($settings['collapsed'] == 1):	$collapsed = FALSE;
-	else: $collapsed = TRUE;
+	else: $collapsed = FALSE;
 	endif;
 	
     $form['b2share_fieldset'] = array(
