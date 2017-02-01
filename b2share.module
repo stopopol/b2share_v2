@@ -691,10 +691,9 @@ function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
 
 
 function b2share_save_to_db($form, &$form_state) {
-
-  $save_doi_value = variable_get('save_dois');
+  
   $values = array();
-  if ($save_doi_value == 1 && isset($form_state['values']['b2share_fieldset']['doi'])){
+  if (variable_get('save_dois') == 1 && isset($form_state['values']['b2share_fieldset']['doi'])){
 	$values['doi'] = $form_state['values']['b2share_fieldset']['doi'];
   }
 
