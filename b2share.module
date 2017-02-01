@@ -637,8 +637,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	  $php_variable = drupal_json_decode($ausgabe);
 	  $files_content = $php_variable['metadata'];
 
-    $save_doi_value = variable_get('save_dois');
-    if ($save_doi_value == 1){
+    if (variable_get('save_dois') == 1){
 		if (isset($files_content['DOI'])){
 			$form['b2share_fieldset']['doi']['#value'] = $files_content['DOI'];
 		}
