@@ -102,19 +102,18 @@ function b2share_form($form, &$form_state) {
     }
   }
 
+  // currently not used 
   function b2share_output_status_messages() {
-    $http_code_visible = variable_get('http_code_visible');
-    $status_message_visible = variable_get('status_message_visible');
-    if ($http_code_visible==1) {
+    if (variable_get('status_message_visible') == 1) {
       drupal_set_message(t('The curl header sent is '.$headerSent));
       drupal_set_message(t('The status code is '.$http_status));
       drupal_set_message(t('The curl status message is '.$ausgabe));
     }
   }
 
+  // currently not used 
   function b2share_ignore_certificates() {
-    $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
-    if ($ignore_outdate_certificates==TRUE) {
+    if (variable_get('ignore_outdate_certificates') == TRUE) {
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     }
@@ -334,11 +333,12 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     $form['b2share_fieldset']['file_select'] = array(
       '#type' => 'managed_file',
       '#title' => t('Select File'),
-      '#description' => t('Allowed extensions: gif png jpg jpeg txt csv'),
+      '#description' => t('Allowed extensions: gif png jpg jpeg txt csv zip 7z'),
       '#default_value' => (isset($foo->picture->fid) ? $foo->picture->fid : ''),
       '#upload_location' => variable_get('picture_upload_location'),
       '#upload_validators' => array(
         'file_validate_size' => array('MAX_FILE_SIZE'*1024*1024),
+		'file_validate_extensions' => array('gif png jpg jpeg txt csv zip 7z')
       ),
     );
 
@@ -424,7 +424,10 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 function b2share_ajax_submit(&$form, &$form_state) {
 
   // clean previous messages
- 
+  //$commands[] = ajax_command_remove('div.messages');
+  //$commands[] = ajax_command_before('#main-content', theme('status_messages'));
+  //ajax_command_remove("#b2share_pid_textfield_div", theme('status_messages'));
+  
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
  
@@ -621,10 +624,10 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // Return status message
   //drupal_set_message(t('The curl header sent is '.$headerSent));
 
-  if ($http_code_visible==TRUE) {
+  if ($http_code_visible == TRUE) {
     drupal_set_message(t('The publishing status code is '.$http_status));
   }
-  if ($status_message_visible==TRUE) {
+  if ($status_message_visible == TRUE) {
     drupal_set_message(t('The curl status message for publishing is '.$ausgabe));
   }
 
@@ -648,7 +651,8 @@ function b2share_ajax_submit(&$form, &$form_state) {
 			'#commands' => array(
 		 	    ajax_command_replace("#b2share_doi_textfield_div", render($form['b2share_fieldset']['doi'])),
 				ajax_command_replace("#b2share_pid_textfield_div", render($form['b2share_fieldset']['pid'])),
-				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+				//ajax_command_remove("#b2share_pid_textfield_div", theme('status_messages')),
+				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),				
 			)
 		  );
 	}
@@ -657,6 +661,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 		return array(
 			'#type' => 'ajax',
 			'#commands' => array(
+				//ajax_command_remove("#b2share_pid_textfield_div", theme('status_messages')),
 				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 			)
 		);
@@ -673,6 +678,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	);
   } 
 
+  
 }
 
 /**
