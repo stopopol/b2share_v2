@@ -694,30 +694,18 @@ function b2share_save_to_db($form, &$form_state) {
 
   $save_doi_value = variable_get('save_dois');
   $values = array();
-  if ($save_doi_value == 1){
-	if (isset($form_state['values']['b2share_fieldset']['doi'])) {  
-		$values['doi'] = $form_state['values']['b2share_fieldset']['doi'];
-    }
-	/*$values = array(
-      'doi' => $form_state['values']['b2share_fieldset']['doi'],
-      'pid' => $form_state['values']['b2share_fieldset']['pid']
-    ); */
+  if ($save_doi_value == 1 && isset($form_state['values']['b2share_fieldset']['doi'])){
+	$values['doi'] = $form_state['values']['b2share_fieldset']['doi'];
   }
 
   if (isset($form_state['values']['b2share_fieldset']['pid'])) {  
-		$values['pid'] = $form_state['values']['b2share_fieldset']['pid'];
+	$values['pid'] = $form_state['values']['b2share_fieldset']['pid'];
   } 
-  /*
-  else {
-	if (isset($form_state['values']['b2share_fieldset']['doi'])) {  
-		$values['doi'] = $form_state['values']['b2share_fieldset']['doi'];
-    }  
-	
-    $values = array(
-      'pid' => $form_state['values']['b2share_fieldset']['pid']
-    ); 
-  } */
 
+  if (!isset($form_state['values']['b2share_fieldset']['doi'])) {  
+	$values['doi'] = '';
+  }
+  
   if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
 
 	$form_state_values = $form_state['values'];
