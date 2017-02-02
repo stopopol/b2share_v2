@@ -301,10 +301,10 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 		$collapsible = TRUE;
 	}
 	elseif ($settings['collapsible'] == 0) {
-		$collapsable = TRUE;
+		$collapsible = TRUE;
 	}
 	else {
-		$collapsable = FALSE;
+		$collapsible = FALSE;
 	}
 
 	if (!isset($settings['collapsed'])){
