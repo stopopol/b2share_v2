@@ -297,24 +297,14 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 	
 	$settings = $instance['settings'];
 	
-	if (!isset($settings['collapsible'])){
-		$collapsible = TRUE;
-	}
-	elseif ($settings['collapsible'] == 0) {
-		$collapsible = TRUE;
-	}
-	else {
+	$collapsible = TRUE;
+	if ($settings['collapsible'] == 1) {
 		$collapsible = FALSE;
 	}
 
-	if (!isset($settings['collapsed'])){
-		$collapsed = FALSE;
-	}
-	elseif ($settings['collapsed'] == 0) {
+	$collapsed = FALSE;
+	if ($settings['collapsed'] == 0) {
 		$collapsed = TRUE;
-	}
-	else {
-		$collapsed = FALSE;
 	}
 
     $form['b2share_fieldset'] = array(
@@ -487,6 +477,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $base_url = rtrim($base_url, '/') . '/';
   $url = $base_url.'api/records/?access_token='.$temp_token;
 
+  $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
   //drupal_set_message(t('The url is '.$url));
   //drupal_set_message(t('open_access is '.$open_access));
 
@@ -508,8 +499,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, $url);
 
-  $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
-  if ($ignore_outdate_certificates==TRUE) {
+  if ($ignore_outdate_certificates == TRUE) {
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
   }
@@ -539,10 +529,10 @@ function b2share_ajax_submit(&$form, &$form_state) {
   if ($http_code_visible==TRUE) {
     drupal_set_message(t('The publishing status for creating a draft is '.$http_status));
   }
-  if ($status_message_visible==TRUE) {
+  if ($status_message_visible == TRUE) {
     drupal_set_message(t('The curl status message for creating a draft is '.$ausgabe));
   }
-  if ($http_status==401) {
+  if ($http_status == 401) {
 	drupal_set_message(t('There is a problem with the authentication. Please check your token.'), 'error');
   }
 
@@ -566,7 +556,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Accept:application/json',
     'Content-Type:application/json',
   ));
-  $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
+
   if ($ignore_outdate_certificates==TRUE) {
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -605,7 +595,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Content-Type:application/json-patch+json',
   ));
 
-  $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
   if ($ignore_outdate_certificates==TRUE) {
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
@@ -633,9 +622,9 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   if ($http_status == 200) {
     drupal_set_message(t('File was successfully deposited :)'), 'status');
-	  drupal_set_message(t('The return message is '.$ausgabe));	
-	  $php_variable = drupal_json_decode($ausgabe);
-	  $files_content = $php_variable['metadata'];
+	drupal_set_message(t('The return message is '.$ausgabe));	
+	$php_variable = drupal_json_decode($ausgabe);
+	$files_content = $php_variable['metadata'];
 
     if (variable_get('save_dois') == 1){
 		if (isset($files_content['DOI'])){
