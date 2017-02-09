@@ -111,13 +111,7 @@ function b2share_form($form, &$form_state) {
     }
   }
 
-  // currently not used 
-  function b2share_ignore_certificates() {
-    if (variable_get('ignore_outdate_certificates') == TRUE) {
-      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    }
-  }
+
 
   // Ouput text to user based on test
   if (b2share_is_curl_installed()) {
@@ -288,7 +282,7 @@ function b2share_field_instance_settings_form($field, $instance) {
  * Implements hook_field_widget_form().
  */
 function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-
+		
   switch ($instance['widget']['type']) {
 
   case 'b2share':
@@ -413,10 +407,12 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 
 function b2share_ajax_submit(&$form, &$form_state) {
 
-  // clean previous messages
-  //$commands[] = ajax_command_remove('div.messages');
-  //$commands[] = ajax_command_before('#main-content', theme('status_messages'));
-  //ajax_command_remove("#b2share_pid_textfield_div", theme('status_messages'));
+  function b2share_ignore_certificates() {
+    if (variable_get('ignore_outdate_certificates') == TRUE) {
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    }
+  }	
   
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
@@ -477,7 +473,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $base_url = rtrim($base_url, '/') . '/';
   $url = $base_url.'api/records/?access_token='.$temp_token;
 
-  $ignore_outdate_certificates = variable_get('ignore_outdate_certificates');
   //drupal_set_message(t('The url is '.$url));
   //drupal_set_message(t('open_access is '.$open_access));
 
@@ -498,12 +493,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // curl
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, $url);
-
-  if ($ignore_outdate_certificates == TRUE) {
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-  }
-
+  b2share_ignore_certificates();
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_POSTFIELDS, $params_json);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -556,11 +546,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Accept:application/json',
     'Content-Type:application/json',
   ));
-
-  if ($ignore_outdate_certificates==TRUE) {
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-  }
+  b2share_ignore_certificates();
   curl_setopt($ch, CURLINFO_HEADER_OUT, true);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   $ausgabe = curl_exec($ch);
@@ -573,10 +559,10 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // Return status message
   //drupal_set_message(t('The curl header sent is '.$headerSent));
 
-  if ($http_code_visible==TRUE) {
+  if ($http_code_visible == TRUE) {
     drupal_set_message(t('The status code for depositing the file is '.$http_status));
   }
-  if ($status_message_visible==TRUE) {
+  if ($status_message_visible == TRUE) {
     drupal_set_message(t('The curl status message for depositing the file is '.$ausgabe));
   }
 
@@ -594,12 +580,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Accept:application/json',
     'Content-Type:application/json-patch+json',
   ));
-
-  if ($ignore_outdate_certificates==TRUE) {
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-  }
-
+  b2share_ignore_certificates();
   curl_setopt($ch, CURLINFO_HEADER_OUT, true);
   $ausgabe = curl_exec($ch);
 
