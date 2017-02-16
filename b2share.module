@@ -282,11 +282,11 @@ function b2share_field_instance_settings_form($field, $instance) {
  * Implements hook_field_widget_form().
  */
 function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
-		
+  
   switch ($instance['widget']['type']) {
 
   case 'b2share':
-
+  
 	$b2share_fieldname = $field['field_name'];
 	
 	$settings = $instance['settings'];
@@ -301,14 +301,15 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 		$collapsed = TRUE;
 	}
 
+	
     $form['b2share_fieldset'] = array(
       '#type'  => 'fieldset',
       '#title'  => t('Publish data on B2Share'),
       '#collapsible'  => $collapsible,
 	  '#collapsed' => $collapsed,
       '#tree'  => TRUE,
-    );
-
+    ); 
+	
 	$form['b2share_fieldset']['database_field_name'] = array(
        '#type'  => 'hidden',
        '#default_value'  => $b2share_fieldname,
@@ -360,7 +361,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#ajax' => array(
         'event' => 'click',
         'callback' => 'b2share_ajax_submit',
-        'wrapper' => 'b2share_pid_textfield_div',
+        //'wrapper' => 'b2share_pid_textfield_div',
       ),
       '#limit_validation_errors' => array(),
     );
@@ -602,8 +603,8 @@ function b2share_ajax_submit(&$form, &$form_state) {
   }
 
   if ($http_status == 200) {
-    drupal_set_message(t('File was successfully deposited :)'), 'status');
-	drupal_set_message(t('The return message is '.$ausgabe));	
+	//drupal_set_message(t('The return message is '.$ausgabe));
+	drupal_set_message(t('File was successfully deposited :)'), 'status');
 	$php_variable = drupal_json_decode($ausgabe);
 	$files_content = $php_variable['metadata'];
 
