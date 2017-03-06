@@ -254,7 +254,7 @@ function b2share_field_formatter_view($entity_type, $entity, $field, $instance, 
             $element[$delta]['#markup'] = $pid_content;
           }
           if (isset($item['doi'])) {
-            $pid_content =   $pid_content.'  ';
+            $pid_content = $pid_content . '  ';
             $element[$delta]['#markup'] = $pid_content. 'DOI: ' . $item['doi'];
           }
         }
@@ -691,25 +691,29 @@ function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
 function b2share_save_to_db($form, &$form_state) {
   
   $values = array();
-  if (variable_get('save_dois') == 1 && isset($form_state['values']['b2share_fieldset']['doi'])){
-	$values['doi'] = $form_state['values']['b2share_fieldset']['doi'];
+  $temp_field_name = $form_state['values']['database_field_name'];
+  if (variable_get('save_dois') == 1 && isset($form_state['values'][$temp_field_name]['und'][0]['doi'])){
+	$values['doi'] = $form_state['values'][$temp_field_name]['und'][0]['doi'];
   }
 
-  if (isset($form_state['values']['b2share_fieldset']['pid'])) {  
-	$values['pid'] = $form_state['values']['b2share_fieldset']['pid'];
+  //if (isset($form_state['values']['b2share_fieldset']['pid'])) {  
+  if (variable_get('save_dois') == 1 && isset($form_state['values'][$temp_field_name]['und'][0]['pid'])){
+	$values['pid'] = $form_state['values'][$temp_field_name]['und'][0]['pid'];
   } 
 
-  if (!isset($form_state['values']['b2share_fieldset']['doi'])) {  
+  if (!isset($form_state['values']['doi'])) {  
 	$values['doi'] = '';
   }
   
   if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
 
-	$form_state_values = $form_state['values'];
-	$form_id_state = $form_state_values['b2share_fieldset'];
+	//$form_state_values = $form_state['values'];
+	//$form_id_state = $form_state_values['b2share_fieldset'];
 
-	$db_name_b2share = $form_id_state['database_field_name'];
+	//$db_name_b2share = $form_id_state['database_field_name'];
+	$db_name_b2share = $form_state['values']['database_field_name'];
 	$b2share_table_name = 'field_data_'.$db_name_b2share;
+	//$b2share_table_name = 'field_data_'.$db_name_b2share;
 	$b2share_column_doi = $db_name_b2share.'_doi';
 	$b2share_column_pid = $db_name_b2share.'_pid';
 
