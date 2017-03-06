@@ -417,11 +417,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
   
   // get field name
   $temp_field_name = $form_state['values']['database_field_name'];
-  drupal_set_message(t('Temp field name = '.$temp_field_name));
-  
-  
-  $test_value = $form_state['values'][$temp_field_name]['und'][0]['file_select'];
-  //drupal_set_message(t('File value = '.$test_value));
   
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
