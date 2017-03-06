@@ -111,8 +111,6 @@ function b2share_form($form, &$form_state) {
     }
   }
 
-
-
   // Ouput text to user based on test
   if (b2share_is_curl_installed()) {
     drupal_set_message(t('Curl is installed.'));
@@ -126,6 +124,7 @@ function b2share_form($form, &$form_state) {
 
 function b2share_form_metadata($form, &$form_state) {
   // display all fields of desired Content-type
+  // currently not used
   function b2share_retrieve_fields() {
     $output_array = array();
     $fields_info = field_info_instances('node', 'data_set');
@@ -287,9 +286,10 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 
   case 'b2share':
   
-	$b2share_fieldname = $field['field_name'];
-	
+    // get settings
+	$b2share_fieldname = $instance['field_name'];
 	$settings = $instance['settings'];
+	$save_doi_value = variable_get('save_dois');
 	
 	$collapsible = TRUE;
 	if ($settings['collapsible'] == 1) {
@@ -301,21 +301,31 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 		$collapsed = TRUE;
 	}
 
+	// add javascript and css
+	$element['#attached']['js'] = array(
+      drupal_get_path('module', 'b2share') . '/js/b2share.js',
+    );
+
+    $element['#attached']['css'] = array(
+      drupal_get_path('module', 'b2share') . '/css/b2share.css',
+    ); 
 	
-    $form['b2share_fieldset'] = array(
+	// fields
+    $element['b2share_fieldset'] = array(
       '#type'  => 'fieldset',
       '#title'  => t('Publish data on B2Share'),
       '#collapsible'  => $collapsible,
 	  '#collapsed' => $collapsed,
       '#tree'  => TRUE,
+
     ); 
 	
-	$form['b2share_fieldset']['database_field_name'] = array(
+	$element['b2share_fieldset']['database_field_name'] = array(
        '#type'  => 'hidden',
        '#default_value'  => $b2share_fieldname,
     ); 
 
-    $form['b2share_fieldset']['file_select'] = array(
+    $element['b2share_fieldset']['file_select'] = array(
       '#type' => 'managed_file',
       '#title' => t('Select File'),
       '#description' => t('Allowed extensions: gif png jpg jpeg txt csv zip 7z'),
@@ -327,34 +337,34 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       ),
     );
 
-    $form['b2share_fieldset']['title'] = array(
+    $element['b2share_fieldset']['title'] = array(
        '#title' => 'Title',
        '#description' => t('Enter the title the dataset should have on B2Share.'),
        '#type'  => 'textfield',
        '#default_value'  => '',
     );
 
-    $form['b2share_fieldset']['description'] = array(
+    $element['b2share_fieldset']['description'] = array(
        '#title' => 'Description',
        '#description' => t('Put the description of the dataset here.'),
        '#type'  => 'textfield',
        '#default_value'  => '',
     );
 
-    $form['b2share_fieldset']['creator'] = array(
+    $element['b2share_fieldset']['creator'] = array(
        '#title' => 'Creator',
        '#description' => t('Put the name of the creator here.'),
        '#type'  => 'textfield',
        '#default_value'  => '',
     );
 
-    $form['b2share_fieldset']['open_access'] = array(
+    $element['b2share_fieldset']['open_access'] = array(
       '#type' =>'checkbox',
       '#title' => t('Open Access'),
       '#default_value'  => 1,
     );
 	
-    $form['b2share_fieldset']['submit_button'] = array(
+    $element['b2share_fieldset']['submit_button'] = array(
       '#type'  => 'button',
       '#name'  => 'submit_button',
       '#default_value'  => t('Deposit file on B2Share'),
@@ -366,17 +376,8 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#limit_validation_errors' => array(),
     );
 	
-    $form['#attached']['js'] = array(
-      drupal_get_path('module', 'b2share') . '/js/b2share.js',
-    );
-
-    $form['#attached']['css'] = array(
-      drupal_get_path('module', 'b2share') . '/css/b2share.css',
-    ); 
-	
-    $save_doi_value = variable_get('save_dois');
     if ($save_doi_value == 1){
-      $form['b2share_fieldset']['doi'] = array(
+      $element['b2share_fieldset']['doi'] = array(
          '#title' => 'DOI',
          '#description' => t('Put the DOI here or have one generated.'),
          '#type'  => 'textfield',
@@ -386,7 +387,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       );
     }
 
-    $form['b2share_fieldset']['pid'] = array(
+    $element['b2share_fieldset']['pid'] = array(
        '#title' => 'PID',
        '#description' => t('Put the PID here or have one generated.'),
        '#type'  => 'textfield',
@@ -395,12 +396,13 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#suffix' => '</div>',
     );
 
-	$form['#groups']['b2share_fieldset']->format_settings['instance_settings']['id'] = 'b2share_field';
+	//$element['#groups']['b2share_fieldset']->format_settings['instance_settings']['id'] = 'b2share_field';
 	
     break;
   }
   return $element;
 }
+
 
 /**
  * Functions that are being called - communication with the B2Share API happens here
@@ -781,6 +783,7 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
   $property['getter callback'] = 'entity_metadata_field_verbatim_get';
   $property['setter callback'] = 'entity_metadata_field_verbatim_set';
 
+  unset($property['query callback']);
 
   $property['property info'] = array(
     'doi' => array(
