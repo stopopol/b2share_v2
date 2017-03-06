@@ -669,7 +669,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
 		)
 	);
   } 
-
   
 }
 
@@ -686,7 +685,6 @@ function b2share_field_is_empty($item, $field) {
 function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
   $form['actions']['submit']['#submit'][] = 'b2share_save_to_db';
 }
-
 
 function b2share_save_to_db($form, &$form_state) {
   
