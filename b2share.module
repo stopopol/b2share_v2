@@ -690,7 +690,7 @@ function b2share_save_to_db($form, &$form_state) {
   }
 
   //if (isset($form_state['values']['b2share_fieldset']['pid'])) {  
-  if (variable_get('save_dois') == 1 && isset($form_state['values'][$temp_field_name]['und'][0]['pid'])){
+  if (isset($form_state['values'][$temp_field_name]['und'][0]['pid'])){
 	$values['pid'] = $form_state['values'][$temp_field_name]['und'][0]['pid'];
   } 
 
