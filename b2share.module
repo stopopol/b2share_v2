@@ -443,8 +443,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   
   if ((empty($file)) == true) {
     form_set_error('[b2share_fieldset][file_select]', t('Please select a file'));
-    //return $form['b2share_fieldset']['pid'];
-	
+  
 	return array(
 		'#type' => 'ajax',
 		'#commands' => array(
@@ -677,12 +676,12 @@ function b2share_field_is_empty($item, $field) {
 	return FALSE;
 }
 
-function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {
+function b2share_form_node_form_alter(&$form, &$form_state, $form_id) {  
   $form['actions']['submit']['#submit'][] = 'b2share_save_to_db';
 }
 
 function b2share_save_to_db($form, &$form_state) {
-  
+	
   $values = array();
   $temp_field_name = $form_state['values']['database_field_name'];
   if (variable_get('save_dois') == 1 && isset($form_state['values'][$temp_field_name]['und'][0]['doi'])){
@@ -700,23 +699,18 @@ function b2share_save_to_db($form, &$form_state) {
   
   if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
 
-	//$form_state_values = $form_state['values'];
-	//$form_id_state = $form_state_values['b2share_fieldset'];
-
-	//$db_name_b2share = $form_id_state['database_field_name'];
 	$db_name_b2share = $form_state['values']['database_field_name'];
+	
 	$b2share_table_name = 'field_data_'.$db_name_b2share;
-	//$b2share_table_name = 'field_data_'.$db_name_b2share;
 	$b2share_column_doi = $db_name_b2share.'_doi';
 	$b2share_column_pid = $db_name_b2share.'_pid';
-
+	
 	/*
 	drupal_set_message(t('the name of the field is '.$db_name_b2share));
 	drupal_set_message(t('the table_name is '.$b2share_table_name));
 	drupal_set_message(t('the doi_column is '.$b2share_column_doi));
-	drupal_set_message(t('the pid_column is '.$b2share_column_pid));
-	*/
-
+	drupal_set_message(t('the pid_column is '.$b2share_column_pid)); */
+	
     $insert = db_insert($b2share_table_name)
       -> fields(array(
 			// and columns
@@ -731,6 +725,8 @@ function b2share_save_to_db($form, &$form_state) {
       ->execute();
 
   }
+  
+  
 }
 
 
