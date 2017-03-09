@@ -447,13 +447,11 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // Fetch metadata information and file
 
   // Load file from select form
-  //$check_file = $form_state['values']['b2share_fieldset']['file_select'];
   $check_file = $form_state['values'][$temp_field_name]['und'][0]['file_select'];
   $file = file_load($check_file['fid']);
   
   if ((empty($file)) == true) {
     form_set_error('[b2share_fieldset][file_select]', t('Please select a file'));
-  
 	return array(
 		'#type' => 'ajax',
 		'#commands' => array(
