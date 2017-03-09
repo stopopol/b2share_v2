@@ -421,7 +421,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   }	
   
   // function for printing http codes and status messages
-  function b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe) {
+  function b2share_print_codes_messages($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe) {
 	  if ($http_code_visible == TRUE) {
 		drupal_set_message(t('The http status code for ' . $phase_string . ' is ' . $http_status));
 	  }
@@ -430,18 +430,18 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	  }
   }
   
-   // get field name
-  $temp_field_name = $form_state['values']['database_field_name'];
+  // get field name
+  $temp_field_name = $form_state['values']['database_field_name'];  
   
   // check for existing values in the pid/doi field    
   if (!empty($form_state['values'][$temp_field_name]['und'][0]['pid'])){
 	drupal_set_message(t('There is already a value set for the pid.'), 'error');
     return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
+			'#type' => 'ajax',
+			'#commands' => array(
+				ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
+				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+			)
 	);
   } 
   
