@@ -554,7 +554,9 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	  $community_value = "e9b9792e-79fb-4b07-b6b4-b9c2bd06d095";
   }
 
-
+  // TO DO: optionally add author and description information to params_json
+  
+  
   $params_json = '{"titles":[{"title":"'.$md_title.'"}],"community":"'.$community_value.'","open_access":'.$open_access.',"community_specific" : {}}';
 
   // curl
