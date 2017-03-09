@@ -423,7 +423,12 @@ function b2share_ajax_submit(&$form, &$form_state) {
  
   if ($temp_token == 'Example LKR35GP7TG') {
     drupal_set_message(t('You need to set a token.'), 'error');
-    return;
+    return array(
+		'#type' => 'ajax',
+		'#commands' => array(
+			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+		)
+	);
   }
 
   // check for curl
@@ -431,7 +436,12 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   if ($curl_version == false ) {
     drupal_set_message(t('Curl is NOT installed.'), 'error');
-    return $form['b2share_fieldset']['pid'];
+    return array(
+		'#type' => 'ajax',
+		'#commands' => array(
+			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+		)
+	);
   }
 
   // Fetch metadata information and file
