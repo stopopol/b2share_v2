@@ -121,9 +121,9 @@ function b2share_form($form, &$form_state) {
 // currently not used 
 function b2share_output_status_messages() {
     if (variable_get('status_message_visible') == 1) {
-      drupal_set_message(t('The curl header sent is '.$headerSent));
-      drupal_set_message(t('The status code is '.$http_status));
-      drupal_set_message(t('The curl status message is '.$ausgabe));
+      drupal_set_message(t('The curl header sent is ' . $headerSent));
+      drupal_set_message(t('The status code is ' . $http_status));
+      drupal_set_message(t('The curl status message is ' . $ausgabe));
     }
 }
 
@@ -399,8 +399,6 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
        '#prefix' => '<div id="b2share_pid_textfield_div">',
        '#suffix' => '</div>',
     );
-
-	//$form['#groups']['b2share_fieldset']->format_settings['instance_settings']['id'] = 'b2share_field';
 	
     break;
   }
@@ -414,12 +412,23 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
 
 function b2share_ajax_submit(&$form, &$form_state) {
 
+  // function for ignoring outdated security certificates
   function b2share_ignore_certificates($ch) {
     if (variable_get('ignore_outdate_certificates') == TRUE) {
       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
       curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     }
   }	
+  
+  // function for printing http codes and status messages
+  function b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe) {
+	  if ($http_code_visible == TRUE) {
+		drupal_set_message(t('The http status code for ' . $phase_string . ' is ' . $http_status));
+	  }
+	  if ($status_message_visible == TRUE) {
+		drupal_set_message(t('The status message for ' . $phase_string . ' is ' . $ausgabe));
+	  }
+  }
   
    // get field name
   $temp_field_name = $form_state['values']['database_field_name'];
@@ -485,7 +494,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $file = file_load($check_file['fid']);
   
   if ((empty($file)) == true) {
-    form_set_error('[b2share_fieldset][file_select]', t('Please select a file'));
+	drupal_set_message(t('Please select a file'), 'error');  
 	return array(
 		'#type' => 'ajax',
 		'#commands' => array(
@@ -527,13 +536,8 @@ function b2share_ajax_submit(&$form, &$form_state) {
     $open_access = "false";
   }
 
-  //drupal_set_message(t('The open access is '.$open_access));
   $status_message_visible = variable_get('status_message_visible');
   $http_code_visible = variable_get('http_code_visible');
-
-  //timestamp
-  //$timestamp =  date("Y-m-d H:i:s");
-  //$md_description = 'My first dataset ingested using the API and curl. Timestamp: '.$timestamp;
 
   // Build the query.
   // Create a new deposition
@@ -583,14 +587,9 @@ function b2share_ajax_submit(&$form, &$form_state) {
   curl_close($ch);
 
   // Return status message
-  //drupal_set_message(t('The curl header sent is '.$headerSent));
-
-  if ($http_code_visible==TRUE) {
-    drupal_set_message(t('The publishing status for creating a draft is '.$http_status));
-  }
-  if ($status_message_visible == TRUE) {
-    drupal_set_message(t('The curl status message for creating a draft is '.$ausgabe));
-  }
+  
+  $phase_string = 'creating a draft';
+  b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe);
   if ($http_status == 401) {
 	drupal_set_message(t('There is a problem with the authentication. Please check your token.'), 'error');
   }
@@ -626,19 +625,12 @@ function b2share_ajax_submit(&$form, &$form_state) {
   curl_close($ch); 
 
   // Return status message
-  //drupal_set_message(t('The curl header sent is '.$headerSent));
-
-  if ($http_code_visible == TRUE) {
-    drupal_set_message(t('The status code for depositing the file is '.$http_status));
-  }
-  if ($status_message_visible == TRUE) {
-    drupal_set_message(t('The curl status message for depositing the file is '.$ausgabe));
-  }
+  $phase_string = 'depositing the file';
+  b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe);
 
   $patch_content='[{"op": "add", "path":"/publication_state", "value": "submitted"}]';
 
   $publish_url = $record_id.'?access_token='.$temp_token;
-  //drupal_set_message(t('The publish_url is '.$publish_url));
 
   // Patch Call in order to publish a draft
   $ch = curl_init($publish_url);
@@ -661,17 +653,11 @@ function b2share_ajax_submit(&$form, &$form_state) {
   curl_close($ch);
 
   // Return status message
-  //drupal_set_message(t('The curl header sent is '.$headerSent));
+  $phase_string = 'publishing the record';
+  b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe);
 
-  if ($http_code_visible == TRUE) {
-    drupal_set_message(t('The publishing status code is '.$http_status));
-  }
-  if ($status_message_visible == TRUE) {
-    drupal_set_message(t('The curl status message for publishing is '.$ausgabe));
-  }
-
+  // set pid and doi field values if deposition was successful
   if ($http_status == 200) {
-	//drupal_set_message(t('The return message is '.$ausgabe));
 	drupal_set_message(t('File was successfully deposited :)'), 'status');
 	$php_variable = drupal_json_decode($ausgabe);
 	$files_content = $php_variable['metadata'];
@@ -710,6 +696,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	return array(
 		'#type' => 'ajax',
 		'#commands' => array(
+			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
 			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 		)
 	);
