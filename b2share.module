@@ -40,6 +40,11 @@ function b2share_menu() {
 
 // Actual content of the menu
 function b2share_form($form, &$form_state) {
+	
+	/*
+	if (isset($_SESSION['messages']['status'])) {
+	  unset($_SESSION['messages']['status']);
+	} */
 
     $form['b2share_url'] = array(
       '#type'  => 'textfield',
@@ -102,6 +107,17 @@ function b2share_form($form, &$form_state) {
     }
   }
 
+  // Ouput text to user based on test
+  if (b2share_is_curl_installed()) { 
+    drupal_set_message(t('Curl is installed.'));
+  } else {
+    drupal_set_message(t('Curl is NOT installed.'), 'error');
+  }
+
+  return system_settings_form($form);
+}
+
+
 // currently not used 
 function b2share_output_status_messages() {
     if (variable_get('status_message_visible') == 1) {
@@ -109,16 +125,6 @@ function b2share_output_status_messages() {
       drupal_set_message(t('The status code is '.$http_status));
       drupal_set_message(t('The curl status message is '.$ausgabe));
     }
-}
-
-  // Ouput text to user based on test
-  if (b2share_is_curl_installed()) {
-    drupal_set_message(t('Curl is installed.'));
-  } else {
-    drupal_set_message(t('Curl is NOT installed.'), 'error');
-  }
-
-  return system_settings_form($form);
 }
 
 
@@ -492,11 +498,23 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $file_realpath =  drupal_realpath($uri);
   $base_file_name = drupal_basename($uri);
 
+  // get field information
   $open_access = $form_state['values'][$temp_field_name]['und'][0]['open_access'];
-  
   $md_description = $form_state['values'][$temp_field_name]['und'][0]['description'];
   $md_title = $form_state['values'][$temp_field_name]['und'][0]['title'];
   $md_creator = $form_state['values'][$temp_field_name]['und'][0]['creator'];
+  
+  // check for a title
+  if (empty($md_title)) {
+    drupal_set_message(t('Please provide at least a title.'), 'error');
+	return array(
+		'#type' => 'ajax',
+		'#commands' => array(
+			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+		)
+	);
+	
+  } 
 
   if ($open_access == 1){
     $open_access = "true";
@@ -520,8 +538,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $base_url = rtrim($base_url, '/') . '/';
   $url = $base_url.'api/records/?access_token='.$temp_token;
 
-  //drupal_set_message(t('The url is '.$url));
-  //drupal_set_message(t('open_access is '.$open_access));
 
   if(!$url || !is_string($url) || ! preg_match('/^http(s)?:\/\/[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(\/.*)?$/i', $url)){
     drupal_set_message(t('Bad url'));
@@ -534,8 +550,8 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	  $community_value = "e9b9792e-79fb-4b07-b6b4-b9c2bd06d095";
   }
 
+
   $params_json = '{"titles":[{"title":"'.$md_title.'"}],"community":"'.$community_value.'","open_access":'.$open_access.',"community_specific" : {}}';
-  //drupal_set_message(t('The params_json is '.$params_json));
 
   // curl
   $ch = curl_init();
