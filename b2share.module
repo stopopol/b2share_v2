@@ -442,7 +442,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 				ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
 				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 			)
-	);
+	); 
   } 
   
   if (variable_get('save_dois') == 1){
