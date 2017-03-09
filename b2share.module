@@ -250,12 +250,12 @@ function b2share_field_formatter_view($entity_type, $entity, $field, $instance, 
       case 'b2share_formatter' :
         foreach ($items as $delta => $item) {
           if (isset($item['pid'])) {
-            $pid_content = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>';
+            $pid_content = 'PID: <a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>';
             $element[$delta]['#markup'] = $pid_content;
           }
           if (isset($item['doi'])) {
-            $pid_content = $pid_content . '  ';
-            $element[$delta]['#markup'] = $pid_content. 'DOI: ' . $item['doi'];
+            $pid_content = $pid_content . '<br>';
+            $element[$delta]['#markup'] = $pid_content. 'DOI: <a href="' . $item['doi'].'"target="_blank">'. $item['doi'] . '</a>';
           }
         }
         break;
@@ -688,7 +688,6 @@ function b2share_save_to_db($form, &$form_state) {
 	$values['doi'] = $form_state['values'][$temp_field_name]['und'][0]['doi'];
   }
 
-  //if (isset($form_state['values']['b2share_fieldset']['pid'])) {  
   if (isset($form_state['values'][$temp_field_name]['und'][0]['pid'])){
 	$values['pid'] = $form_state['values'][$temp_field_name]['und'][0]['pid'];
   } 
@@ -704,12 +703,6 @@ function b2share_save_to_db($form, &$form_state) {
 	$b2share_table_name = 'field_data_'.$db_name_b2share;
 	$b2share_column_doi = $db_name_b2share.'_doi';
 	$b2share_column_pid = $db_name_b2share.'_pid';
-	
-	/*
-	drupal_set_message(t('the name of the field is '.$db_name_b2share));
-	drupal_set_message(t('the table_name is '.$b2share_table_name));
-	drupal_set_message(t('the doi_column is '.$b2share_column_doi));
-	drupal_set_message(t('the pid_column is '.$b2share_column_pid)); */
 	
     $insert = db_insert($b2share_table_name)
       -> fields(array(
