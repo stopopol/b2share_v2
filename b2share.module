@@ -415,8 +415,34 @@ function b2share_ajax_submit(&$form, &$form_state) {
     }
   }	
   
-  // get field name
+   // get field name
   $temp_field_name = $form_state['values']['database_field_name'];
+  
+  // check for existing values in the pid/doi field    
+  if (!empty($form_state['values'][$temp_field_name]['und'][0]['pid'])){
+	drupal_set_message(t('There is already a value set for the pid.'), 'error');
+    return array(
+		'#type' => 'ajax',
+		'#commands' => array(
+			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
+			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+		)
+	);
+  } 
+  
+  if (variable_get('save_dois') == 1){
+	if (!empty($form_state['values'][$temp_field_name]['und'][0]['doi'])){
+		drupal_set_message(t('There is already a value set for the doi.'), 'error');
+		return array(
+			'#type' => 'ajax',
+			'#commands' => array(
+				ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
+				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+			)
+		);
+	} 		
+  }
+  
   
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
@@ -464,18 +490,12 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // get file information
   $uri = $file->uri;
   $file_realpath =  drupal_realpath($uri);
-  $file_url =       file_create_url($uri);
   $base_file_name = drupal_basename($uri);
-  //$open_access = $form_state['values']['b2share_fieldset']['open_access'];
+
   $open_access = $form_state['values'][$temp_field_name]['und'][0]['open_access'];
   
-  //$md_description = $form_state['values']['b2share_fieldset']['description'];
   $md_description = $form_state['values'][$temp_field_name]['und'][0]['description'];
-  
-  //$md_title = $form_state['values']['b2share_fieldset']['title'];
   $md_title = $form_state['values'][$temp_field_name]['und'][0]['title'];
-  
-  //$md_creator = $form_state['values']['b2share_fieldset']['creator'];
   $md_creator = $form_state['values'][$temp_field_name]['und'][0]['creator'];
 
   if ($open_access == 1){
