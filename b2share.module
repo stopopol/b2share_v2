@@ -630,7 +630,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	$php_variable = drupal_json_decode($ausgabe);
 	$files_content = $php_variable['metadata'];
 	
-	
     if (variable_get('save_dois') == 1){
 		if (isset($files_content['DOI'])){
 			$form[$temp_field_name]['und'][0]['doi']['#value'] = $files_content['DOI'];
@@ -717,14 +716,9 @@ function b2share_save_to_db($form, &$form_state) {
 		   'language' => 'und',
 		))
       ->execute();
-
   }
-  
-  
 }
 
-
-// needed for token integration
 
 /**
  * Implements hook_token_info().
@@ -780,10 +774,11 @@ function b2share_tokens($type, $tokens, array $data = array(), array $options = 
   return $replacements;
 }
 
-// rules integration, fields are visible but values can't be set and its value can't copied to another field, no idea why
-
 /**
  * Property callback.
+ *
+ * rules integration, fields are visible but values can't be set and its value can't copied to another field, no idea why
+ * 
  */
 function b2share_field_property_callback(&$info, $entity_type, $field, $instance, $field_type) {
   $property = &$info[$entity_type]['bundles'][$instance['bundle']]['properties'][$field['field_name']];
