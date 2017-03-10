@@ -556,6 +556,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $phase_string = 'creating a draft';
   b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $ausgabe);
 
+  // catch case, that a draft couldn't be created for whatever reason
   if ($http_status != 201) {
 	drupal_set_message(t('The draft could not be created :('), 'error');
 	return b2share_print_drupal_messages($form, $temp_field_name);
