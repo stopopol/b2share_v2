@@ -424,44 +424,35 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // get field name
   $temp_field_name = $form_state['values']['database_field_name'];  
   
-  // check for existing values in the pid/doi field    
-  if (!empty($form_state['values'][$temp_field_name]['und'][0]['pid'])){
-	drupal_set_message(t('There is already a value set for the pid.'), 'error');
-    return array(
+  function b2share_print_drupal_messages($form, $temp_field_name){
+	return array (
 			'#type' => 'ajax',
 			'#commands' => array(
 				ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
 				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 			)
-	); 
+	);   
+  }
+  
+  // check for existing values in the pid/doi field    
+  if (!empty($form_state['values'][$temp_field_name]['und'][0]['pid'])){
+	drupal_set_message(t('There is already a value set for the pid.'), 'error');
+	return b2share_print_drupal_messages($form, $temp_field_name);
   } 
   
   if (variable_get('save_dois') == 1){
 	if (!empty($form_state['values'][$temp_field_name]['und'][0]['doi'])){
 		drupal_set_message(t('There is already a value set for the doi.'), 'error');
-		return array(
-			'#type' => 'ajax',
-			'#commands' => array(
-				ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-			)
-		);
+		return b2share_print_drupal_messages($form, $temp_field_name);
 	} 		
   }
-  
   
   // Fetch token from settings
   $temp_token = variable_get('b2share_token');
  
   if ($temp_token == 'Example LKR35GP7TG') {
     drupal_set_message(t('You need to set a token.'), 'error');
-    return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+    return b2share_print_drupal_messages($form, $temp_field_name);
   }
 
   // check for curl
@@ -469,13 +460,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   if ($curl_version == false ) {
     drupal_set_message(t('Curl is NOT installed.'), 'error');
-    return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+    return b2share_print_drupal_messages($form, $temp_field_name);
   }
 
   // Fetch metadata information and file
@@ -486,13 +471,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   
   if ((empty($file)) == true) {
 	drupal_set_message(t('Please select a file'), 'error');  
-	return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+	return b2share_print_drupal_messages($form, $temp_field_name);
   } 
 
   // get file information
@@ -509,13 +488,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // check for a title
   if (empty($md_title)) {
     drupal_set_message(t('Please provide at least a title.'), 'error');
-	return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+	return b2share_print_drupal_messages($form, $temp_field_name);
   } 
 
   if ($open_access == 1){
@@ -599,13 +572,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   if ($http_status != 201) {
 	drupal_set_message(t('The draft could not be created :('), 'error');
-	return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+	return b2share_print_drupal_messages($form, $temp_field_name);
   }
   
   // Save response as php variable
@@ -695,25 +662,13 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	}
 	else {
 		drupal_set_message(t('The file was deposited, but no PID was returned :/'), 'error');
-		return array(
-			'#type' => 'ajax',
-			'#commands' => array(
-				ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-				ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-			)
-		);
+		return b2share_print_drupal_messages($form, $temp_field_name);
 	}
 
   }
   else {
 	drupal_set_message(t('Oh no. Something went wrong. No file was deposited :('), 'error');
-	return array(
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+	return b2share_print_drupal_messages($form, $temp_field_name);
   } 
   
 }
