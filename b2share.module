@@ -566,10 +566,14 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	 $params_json .=  '"descriptions": [{"description": "' . $md_description . '","description_type": "Abstract"}],';
   } 
   
+  if (!empty($md_creator)) {
+	 $params_json .=  '"creators": [{"creator_name":"' . $md_creator . '"}],';
+  } 
+  
   $params_json .= '"community_specific" : {}';
   $params_json .= '}';
   
-  drupal_set_message(t('params_json ' . $params_json));
+  //drupal_set_message(t('params_json ' . $params_json));
 
   // curl
   $ch = curl_init();
