@@ -502,7 +502,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
 			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 		)
 	);
-	
   } 
 
   // get file information
@@ -526,7 +525,6 @@ function b2share_ajax_submit(&$form, &$form_state) {
 			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
 		)
 	);
-	
   } 
 
   if ($open_access == 1){
@@ -557,11 +555,21 @@ function b2share_ajax_submit(&$form, &$form_state) {
 	  drupal_set_message(t('No community value was set. File will be uploaded to generic domain.'));
 	  $community_value = "e9b9792e-79fb-4b07-b6b4-b9c2bd06d095";
   }
-
-  // TO DO: optionally add author and description information to params_json
+ 
+  // mandatory metadata
+  $params_json = '{"titles":[{"title":"' . $md_title . '"}],';
+  $params_json .= '"community":"' . $community_value . '",';
+  $params_json .= '"open_access":' . $open_access . ',';
   
+  // optional metadata
+  if (!empty($md_description)) {
+	 $params_json .=  '"descriptions": [{"description": "' . $md_description . '","description_type": "Abstract"}],';
+  } 
   
-  $params_json = '{"titles":[{"title":"'.$md_title.'"}],"community":"'.$community_value.'","open_access":'.$open_access.',"community_specific" : {}}';
+  $params_json .= '"community_specific" : {}';
+  $params_json .= '}';
+  
+  drupal_set_message(t('params_json ' . $params_json));
 
   // curl
   $ch = curl_init();
