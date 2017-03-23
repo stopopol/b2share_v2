@@ -309,7 +309,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     $element['file_select'] = array(
       '#type' => 'managed_file',
       '#title' => t('Select File'),
-      '#description' => t('Allowed extensions: gif png jpg jpeg txt csv zip 7z'),
+      '#description' => t('Allowed extensions: gif png jpg jpeg txt csv xls xlsx zip 7z'),
       '#default_value' => (isset($foo->picture->fid) ? $foo->picture->fid : ''),
       '#upload_location' => variable_get('picture_upload_location'),
       '#upload_validators' => array(
