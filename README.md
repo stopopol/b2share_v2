@@ -41,7 +41,8 @@ Usage
 
 	•	Hit "Deposit file on B2Share"
 
-	•	The formatter will just present the deposit URL at the moment and likely PID of the uploaded file in the future
+	•	The formatter will just present the deposit URL at the moment
+	and likely PID of the uploaded file in the future
 
 Features
 
