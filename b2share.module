@@ -1,10 +1,10 @@
 <?php
 
 /**
-*@file
-*b2share.module
-* Allows a direct upload to B2Share using the REST API
-*/
+ * @file
+ * b2share.module
+ * Allows a direct upload to B2Share using the REST API
+ */
 
 /**
  * Implements hook_menu().
