@@ -792,31 +792,31 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
 
   $property['property info'] = array(
     'doi' => array(
-        'type' => 'text',
-        'label' => t('DOI'),
-		'description' => t('Subfield of Field "' . $field['field_name'] . '".'),
-        //'sanitized' => TRUE,
-        'getter callback' => 'entity_property_verbatim_get',
-        'setter callback' => 'entity_property_verbatim_set',
-        //'setter permission' => 'administer nodes',
-        //'raw getter callback' => 'entity_property_verbatim_get',
+      'type' => 'text',
+      'label' => t('DOI'),
+	  'description' => t('Subfield of Field "' . $field['field_name'] . '".'),
+      //'sanitized' => TRUE,
+      'getter callback' => 'entity_property_verbatim_get',
+      'setter callback' => 'entity_property_verbatim_set',
+      //'setter permission' => 'administer nodes',
+      //'raw getter callback' => 'entity_property_verbatim_get',
     ),
     'pid' => array(
-        'type' => 'text',
-        'label' => t('PID'),
-		'description' => t('Subfield of Field "' . $field['field_name'] . '".'),
-        //'sanitized' => TRUE,
-        'getter callback' => 'entity_property_verbatim_get',
-        'setter callback' => 'entity_property_verbatim_set',
-        //'setter permission' => 'administer nodes',
-        //'raw getter callback' => 'entity_property_verbatim_get',
+      'type' => 'text',
+      'label' => t('PID'),
+      'description' => t('Subfield of Field "' . $field['field_name'] . '".'),
+      //'sanitized' => TRUE,
+      'getter callback' => 'entity_property_verbatim_get',
+      'setter callback' => 'entity_property_verbatim_set',
+      //'setter permission' => 'administer nodes',
+      //'raw getter callback' => 'entity_property_verbatim_get',
     ),
     /*
     'format' => array(
-        'type' => 'token',
-        'label' => t('Text format'),
-        'options list' => 'entity_metadata_field_text_formats',
-        'getter callback' => 'entity_property_verbatim_get',
+      'type' => 'token',
+      'label' => t('Text format'),
+      'options list' => 'entity_metadata_field_text_formats',
+      'getter callback' => 'entity_property_verbatim_get',
     ), */
 
   );
