@@ -8,7 +8,6 @@
 /**
  * Implements hook_field_schema()
  */
-
 function b2share_field_schema($field) {
   return array(
     'columns' => array(
@@ -26,12 +25,10 @@ function b2share_field_schema($field) {
   );
 }
 
-
 /**
  * Implements hook_uninstall()
  */
 
- // Deletes created variables
+// Deletes created variables
 function b2share_uninstall() {
-  //variable_del('');
 }
