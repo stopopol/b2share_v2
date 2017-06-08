@@ -125,8 +125,8 @@ function b2share_form_metadata($form, &$form_state) {
   // print all communities
   $base_url = variable_get('b2share_url');
   $base_url = rtrim($base_url, '/') . '/';
-  $url = '<a href="' . $base_url . 'api/communities' . '" target="_blank">' . $base_url . 'api/communities </a>';
-  drupal_set_message(t('The communities on B2Share are listed here: ' .  check_plain(($url))));
+  $url = '<a href="' . check_plain($base_url) . 'api/communities' . '" target="_blank">' . check_plain($base_url) . 'api/communities </a>';
+  drupal_set_message(t('The communities on B2Share are listed here: ' . $url));
 
   return system_settings_form($form);
 }
