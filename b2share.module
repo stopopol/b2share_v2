@@ -74,7 +74,7 @@ function b2share_form($form, &$form_state) {
     $form['status_message_visible'] = array(
       '#type'  => 'checkbox',
       '#title'  => 'Display curl status messages',
-	  '#description' => 'Should the curl status codes be displayed? ATTENTION: This can/will expose the token to users',
+      '#description' => 'Should the curl status codes be displayed? ATTENTION: This can/will expose the token to users',
       '#required'  => FALSE,
       '#default_value'  => variable_get('status_message_visible', 0),
     );
@@ -95,9 +95,9 @@ function b2share_form($form, &$form_state) {
       '#default_value'  => variable_get('save_dois', 1),
     );
 
-	$curl_version = function_exists('curl_version');
+    $curl_version = function_exists('curl_version');
 
-    if ($curl_version == false ) {
+    if ($curl_version == FALSE ) {
       drupal_set_message(t('Curl is NOT installed.'), 'error');
     }
     else {
@@ -125,7 +125,7 @@ function b2share_form_metadata($form, &$form_state) {
   // print all communities
   $base_url = variable_get('b2share_url');
   $base_url = rtrim($base_url, '/') . '/';
-  $url = '<a href="' . $base_url.'api/communities' . '" target="_blank">' . $base_url.'api/communities </a>';
+  $url = '<a href="' . $base_url . 'api/communities' . '" target="_blank">' . $base_url.'api/communities </a>';
   drupal_set_message(t('The communities on B2Share are listed here: ' . $url));
 
   return system_settings_form($form);
@@ -153,8 +153,8 @@ function b2share_form_metadata($form, &$form_state) {
 function b2share_field_widget_info() {
     return array(
       'b2share'  => array(
-		'label'  => t('B2Share Widget'),
-		'field types'  => array('b2share'),
+        'label'  => t('B2Share Widget'),
+        'field types'  => array('b2share'),
       )
     );
 }
@@ -177,7 +177,7 @@ function b2share_field_instance_settings_form($field, $instance) {
   $form['collapsible'] = array(
     '#type' => 'radios',
     '#title' => t('Is this field collapsible?'),
-	'#default_value' => isset($settings['collapsible']) ? $settings['collapsible'] : 0,
+    '#default_value' => isset($settings['collapsible']) ? $settings['collapsible'] : 0,
     '#options' => array(
       t('Collapsible'),
       t('Not collapsible'),
@@ -213,7 +213,7 @@ function b2share_field_formatter_info() {
       'field types'  => array('b2share'),
       ),
 
-	  'b2share_doi_formatter'  => array(
+      'b2share_doi_formatter'  => array(
       'label'  => t('B2Share DOI Field Formatter'),
       'field types'  => array('b2share'),
       ),
@@ -231,23 +231,23 @@ function b2share_field_formatter_view($entity_type, $entity, $field, $instance, 
       case 'b2share_formatter' :
         foreach ($items as $delta => $item) {
           if (isset($item['pid'])) {
-            $pid_content = 'PID: <a href="' . $item['pid'].'"target="_blank">'. $item['pid'] . '</a>';
+            $pid_content = 'PID: <a href="' . $item['pid'] . '"target="_blank">' . $item['pid'] . '</a>';
             $element[$delta]['#markup'] = $pid_content;
           }
           if (isset($item['doi'])) {
             $pid_content = $pid_content . '<br>';
-            $element[$delta]['#markup'] = $pid_content. 'DOI: <a href="' . $item['doi'].'"target="_blank">'. $item['doi'] . '</a>';
+            $element[$delta]['#markup'] = $pid_content . 'DOI: <a href="' . $item['doi'].'"target="_blank">' . $item['doi'] . '</a>';
           }
         }
         break;
-	   case 'b2share_pid_formatter' :
+      case 'b2share_pid_formatter' :
         foreach ($items as $delta => $item) {
           if (isset($item['pid'])) {
-            $element[$delta]['#markup'] = '<a href="' . $item['pid'].'"target="_blank">'. $item['pid']. '</a>';
+            $element[$delta]['#markup'] = '<a href="' . $item['pid'] . '"target="_blank">' . $item['pid'] . '</a>';
           }
         }
         break;
-		case 'b2share_doi_formatter' :
+      case 'b2share_doi_formatter' :
         foreach ($items as $delta => $item) {
           if (isset($item['doi'])) {
             $element[$delta]['#markup'] = $item['doi'];
@@ -268,28 +268,28 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
   case 'b2share':
 
     // fetch settings
-	$b2share_fieldname = $instance['field_name'];
-	$settings = $instance['settings'];
-	$save_doi_value = variable_get('save_dois');
+    $b2share_fieldname = $instance['field_name'];
+    $settings = $instance['settings'];
+    $save_doi_value = variable_get('save_dois');
 
-	$collapsible = TRUE;
-	if ($settings['collapsible'] == 1) {
-		$collapsible = FALSE;
-	}
+    $collapsible = TRUE;
+    if ($settings['collapsible'] == 1) {
+      $collapsible = FALSE;
+    }
 
-	$collapsed = FALSE;
-	if ($settings['collapsed'] == 0) {
-		$collapsed = TRUE;
-	}
+    $collapsed = FALSE;
+    if ($settings['collapsed'] == 0) {
+      $collapsed = TRUE;
+    }
 
-	// hidden field for saving the fieldname
-	$form['database_field_name'] = array(
-       '#type'  => 'hidden',
-       '#default_value'  => $b2share_fieldname,
+    // hidden field for saving the fieldname
+    $form['database_field_name'] = array(
+      '#type'  => 'hidden',
+      '#default_value'  => $b2share_fieldname,
     );
 
-	// add javascript and css
-	$element['#attached']['js'] = array(
+    // add javascript and css
+    $element['#attached']['js'] = array(
       drupal_get_path('module', 'b2share') . '/js/b2share.js',
     );
 
@@ -297,12 +297,12 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       drupal_get_path('module', 'b2share') . '/css/b2share.css',
     );
 
-	// metadata fields of the form
+    // metadata fields of the form
     $element+= array(
       '#type'  => 'fieldset',
       '#title'  => t('Publish data on B2Share'),
       '#collapsible'  => $collapsible,
-	  '#collapsed' => $collapsed,
+      '#collapsed' => $collapsed,
       '#tree'  => TRUE,
     );
 
@@ -314,7 +314,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#upload_location' => variable_get('picture_upload_location'),
       '#upload_validators' => array(
         'file_validate_size' => array('MAX_FILE_SIZE'*1024*1024),
-		'file_validate_extensions' => array('gif png jpg jpeg txt csv xls xlsx zip 7z')
+        'file_validate_extensions' => array('gif png jpg jpeg txt csv xls xlsx zip 7z')
       ),
     );
 
@@ -340,7 +340,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
     );
 
     $element['open_access'] = array(
-      '#type' =>'checkbox',
+      '#type' => 'checkbox',
       '#title' => t('Open Access'),
       '#default_value'  => 1,
     );
@@ -356,7 +356,7 @@ function b2share_field_widget_form(&$form, &$form_state, $field, $instance, $lan
       '#limit_validation_errors' => array(),
     );
 
-    if ($save_doi_value == 1){
+    if ($save_doi_value == 1) {
       $element['doi'] = array(
          '#title' => 'DOI',
          '#description' => t('Put the DOI here or have one generated.'),
@@ -392,51 +392,51 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // function for ignoring outdated security certificates
   function b2share_ignore_certificates($ch) {
     if (variable_get('ignore_outdate_certificates') == TRUE) {
-      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
     }
   }
 
   // function for printing http codes and status messages
   function b2share_print_codes_messages($http_code_visible, $status_message_visible, $phase_string, $http_status, $output) {
-	if ($http_code_visible == TRUE) {
+    if ($http_code_visible == TRUE) {
 		drupal_set_message(t('The http status code for ' . $phase_string . ' is ' . $http_status));
-	}
+    }
 
-	if ($status_message_visible == TRUE) {
-		drupal_set_message(t('The status message for ' . $phase_string . ' is ' . $output));
-	}
+    if ($status_message_visible == TRUE) {
+      drupal_set_message(t('The status message for ' . $phase_string . ' is ' . $output));
+    }
 
-	if ($http_status == 401) {
-		drupal_set_message(t('There is a problem with the authentication. Please check your token.'), 'error');
-	}
+    if ($http_status == 401) {
+      drupal_set_message(t('There is a problem with the authentication. Please check your token.'), 'error');
+    }
   }
 
   // get field name
   $temp_field_name = $form_state['values']['database_field_name'];
 
   // function for printing the drupal status messages within an ajax call
-  function b2share_print_drupal_messages($form, $temp_field_name){
-	return array (
-		'#type' => 'ajax',
-		'#commands' => array(
-			ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
-			ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
-		)
-	);
+  function b2share_print_drupal_messages($form, $temp_field_name) {
+    return array(
+      '#type' => 'ajax',
+      '#commands' => array(
+        ajax_command_replace("#b2share_pid_textfield_div", render($form[$temp_field_name]['und'][0]['pid'])),
+        ajax_command_append("#b2share_pid_textfield_div", theme('status_messages')),
+      )
+    );
   }
 
   // check for existing values in the pid/doi field
   if (!empty($form_state['values'][$temp_field_name]['und'][0]['pid'])){
-	drupal_set_message(t('There is already a value set for the pid.'), 'error');
-	return b2share_print_drupal_messages($form, $temp_field_name);
+    drupal_set_message(t('There is already a value set for the pid.'), 'error');
+    return b2share_print_drupal_messages($form, $temp_field_name);
   }
 
-  if (variable_get('save_dois') == 1){
-	if (!empty($form_state['values'][$temp_field_name]['und'][0]['doi'])){
-		drupal_set_message(t('There is already a value set for the doi.'), 'error');
-		return b2share_print_drupal_messages($form, $temp_field_name);
-	}
+  if (variable_get('save_dois') == 1) {
+    if (!empty($form_state['values'][$temp_field_name]['und'][0]['doi'])){
+      drupal_set_message(t('There is already a value set for the doi.'), 'error');
+      return b2share_print_drupal_messages($form, $temp_field_name);
+    }
   }
 
   // Fetch token from settings
@@ -450,7 +450,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // check for curl
   $curl_version = function_exists('curl_version');
 
-  if ($curl_version == false ) {
+  if ($curl_version == FALSE ) {
     drupal_set_message(t('Curl is NOT installed.'), 'error');
     return b2share_print_drupal_messages($form, $temp_field_name);
   }
@@ -461,9 +461,9 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $check_file = $form_state['values'][$temp_field_name]['und'][0]['file_select'];
   $file = file_load($check_file['fid']);
 
-  if ((empty($file)) == true) {
-	drupal_set_message(t('Please select a file'), 'error');
-	return b2share_print_drupal_messages($form, $temp_field_name);
+  if ((empty($file)) == TRUE) {
+    drupal_set_message(t('Please select a file'), 'error');
+    return b2share_print_drupal_messages($form, $temp_field_name);
   }
 
   // get file information
@@ -480,10 +480,10 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // check for a title
   if (empty($md_title)) {
     drupal_set_message(t('Please provide at least a title.'), 'error');
-	return b2share_print_drupal_messages($form, $temp_field_name);
+    return b2share_print_drupal_messages($form, $temp_field_name);
   }
 
-  if ($open_access == 1){
+  if ($open_access == 1) {
     $open_access = "true";
   }
   else {
@@ -498,18 +498,18 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $base_url = variable_get('b2share_url');
   // check if trailing slash was added
   $base_url = rtrim($base_url, '/') . '/';
-  $url = $base_url.'api/records/?access_token='.$temp_token;
+  $url = $base_url . 'api/records/?access_token=' . $temp_token;
 
 
-  if(!$url || !is_string($url) || ! preg_match('/^http(s)?:\/\/[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(\/.*)?$/i', $url)){
+  if(!$url || !is_string($url) || ! preg_match('/^http(s)?:\/\/[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(\/.*)?$/i', $url)) {
     drupal_set_message(t('Bad url'));
   }
 
   $community_value = variable_get('b2share_domain');
 
   if (!$community_value) {
-	  drupal_set_message(t('No community value was set. File will be uploaded to generic domain.'));
-	  $community_value = "e9b9792e-79fb-4b07-b6b4-b9c2bd06d095";
+    drupal_set_message(t('No community value was set. File will be uploaded to generic domain.'));
+    $community_value = "e9b9792e-79fb-4b07-b6b4-b9c2bd06d095";
   }
 
   // get available metadata and construct the json for transmitting the parameters
@@ -520,11 +520,11 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   // optional metadata
   if (!empty($md_description)) {
-	$params_json .=  '"descriptions": [{"description": "' . $md_description . '","description_type": "Abstract"}],';
+    $params_json .=  '"descriptions": [{"description": "' . $md_description . '","description_type": "Abstract"}],';
   }
 
   if (!empty($md_creator)) {
-	$params_json .=  '"creators": [{"creator_name":"' . $md_creator . '"}],';
+    $params_json .=  '"creators": [{"creator_name":"' . $md_creator . '"}],';
   }
 
   $params_json .= '"community_specific" : {}';
@@ -540,26 +540,28 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Accept:application/json',
     'Content-Type:application/json',
   ));
-  curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+  curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);
   // output the response
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 
   $output = curl_exec($ch);
   $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   $headerSent = curl_getinfo($ch, CURLINFO_HEADER_OUT );
 
-  if ($output === false) {$output = curl_error($ch);}
+  if ($output === false) {
+    $output = curl_error($ch);
+  }
 
   curl_close($ch);
 
   // Return status message
   $phase_string = 'creating a draft';
-  b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $output);
+  b2share_print_codes_messages($http_code_visible, $status_message_visible, $phase_string, $http_status, $output);
 
   // catch case, that a draft couldn't be created for whatever reason
   if ($http_status != 201) {
-	drupal_set_message(t('The draft could not be created :('), 'error');
-	return b2share_print_drupal_messages($form, $temp_field_name);
+    drupal_set_message(t('The draft could not be created :('), 'error');
+    return b2share_print_drupal_messages($form, $temp_field_name);
   }
 
   // Save response as php variable
@@ -570,11 +572,11 @@ function b2share_ajax_submit(&$form, &$form_state) {
   $record_id = $return_links['self'];
 
   // PID of deposition
-  $upload_url = $draft_id.'/'.$base_file_name.'?access_token='.$temp_token;
+  $upload_url = $draft_id . '/' . $base_file_name . '?access_token=' . $temp_token;
 
   // deposit file
   $ch = curl_init($upload_url);
-  $cfile = new CURLFile($file_realpath,'application/octet-stream', $base_file_name);
+  $cfile = new CURLFile($file_realpath, 'application/octet-stream', $base_file_name);
   $data = array ('test_file' => $cfile);
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
   curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -583,8 +585,8 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Content-Type:application/json',
   ));
   b2share_ignore_certificates($ch);
-  curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
   $output = curl_exec($ch);
 
   $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -594,15 +596,15 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   // Return status message
   $phase_string = 'depositing the file';
-  b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $output);
+  b2share_print_codes_messages($http_code_visible, $status_message_visible, $phase_string, $http_status, $output);
 
   $patch_content='[{"op": "add", "path":"/publication_state", "value": "submitted"}]';
 
-  $publish_url = $record_id.'?access_token='.$temp_token;
+  $publish_url = $record_id . '?access_token=' . $temp_token;
 
   // Patch Call in order to publish a draft
   $ch = curl_init($publish_url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH');
   curl_setopt($ch, CURLOPT_POSTFIELDS, $patch_content);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -610,7 +612,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
     'Content-Type:application/json-patch+json',
   ));
   b2share_ignore_certificates($ch);
-  curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+  curl_setopt($ch, CURLINFO_HEADER_OUT, TRUE);
   $output = curl_exec($ch);
 
   $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -622,20 +624,20 @@ function b2share_ajax_submit(&$form, &$form_state) {
 
   // Return status message
   $phase_string = 'publishing the record';
-  b2share_print_codes_messages ($http_code_visible, $status_message_visible, $phase_string, $http_status, $output);
+  b2share_print_codes_messages($http_code_visible, $status_message_visible, $phase_string, $http_status, $output);
 
   // set pid and doi field values if deposition was successful
   if ($http_status == 200) {
-	drupal_set_message(t('File was successfully deposited :)'), 'status');
-	$php_variable = drupal_json_decode($output);
-	$files_content = $php_variable['metadata'];
+    drupal_set_message(t('File was successfully deposited :)'), 'status');
+    $php_variable = drupal_json_decode($output);
+    $files_content = $php_variable['metadata'];
 
-    if (variable_get('save_dois') == 1){
-		if (isset($files_content['DOI'])){
+    if (variable_get('save_dois') == 1) {
+		if (isset($files_content['DOI'])) {
 			$form[$temp_field_name]['und'][0]['doi']['#value'] = $files_content['DOI'];
 		}
     }
-	if (isset($files_content['ePIC_PID'])){
+	if (isset($files_content['ePIC_PID'])) {
 		$form[$temp_field_name]['und'][0]['pid']['#value'] = $files_content['ePIC_PID'];
 		return array(
 			'#type' => 'ajax',
@@ -647,7 +649,7 @@ function b2share_ajax_submit(&$form, &$form_state) {
 		  );
 	}
 	else {
-		drupal_set_message(t('The file was deposited, but no PID was returned :/ Please talk to the administrator of the B2Share instance. '), 'error');
+		drupal_set_message(t('The file was deposited, but no PID was returned :/ Please talk to the administrator of the B2Share instance.'), 'error');
 		return b2share_print_drupal_messages($form, $temp_field_name);
 	}
 
@@ -685,11 +687,11 @@ function b2share_save_to_db($form, &$form_state) {
 
   $values = array();
   $temp_field_name = $form_state['values']['database_field_name'];
-  if (variable_get('save_dois') == 1 && isset($form_state['values'][$temp_field_name]['und'][0]['doi'])){
+  if (variable_get('save_dois') == 1 && isset($form_state['values'][$temp_field_name]['und'][0]['doi'])) {
 	$values['doi'] = $form_state['values'][$temp_field_name]['und'][0]['doi'];
   }
 
-  if (isset($form_state['values'][$temp_field_name]['und'][0]['pid'])){
+  if (isset($form_state['values'][$temp_field_name]['und'][0]['pid'])) {
 	$values['pid'] = $form_state['values'][$temp_field_name]['und'][0]['pid'];
   }
 
@@ -697,13 +699,13 @@ function b2share_save_to_db($form, &$form_state) {
 	$values['doi'] = '';
   }
 
-  if ( (empty($values['doi'] == false) || (empty($values['pid']) == false)) ) {
+  if ( (empty($values['doi'] == FALSE) || (empty($values['pid']) == FALSE)) ) {
 
 	$db_name_b2share = $form_state['values']['database_field_name'];
 
-	$b2share_table_name = 'field_data_'.$db_name_b2share;
-	$b2share_column_doi = $db_name_b2share.'_doi';
-	$b2share_column_pid = $db_name_b2share.'_pid';
+	$b2share_table_name = 'field_data_' . $db_name_b2share;
+	$b2share_column_doi = $db_name_b2share . '_doi';
+	$b2share_column_pid = $db_name_b2share . '_pid';
 
     $insert = db_insert($b2share_table_name)
       -> fields(array(
@@ -792,7 +794,7 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
     'doi' => array(
         'type' => 'text',
         'label' => t('DOI'),
-		'description' => t('Subfield of Field "'.$field['field_name'].'".'),
+		'description' => t('Subfield of Field "' . $field['field_name'] . '".'),
         //'sanitized' => TRUE,
         'getter callback' => 'entity_property_verbatim_get',
         'setter callback' => 'entity_property_verbatim_set',
@@ -802,14 +804,14 @@ function b2share_field_property_callback(&$info, $entity_type, $field, $instance
     'pid' => array(
         'type' => 'text',
         'label' => t('PID'),
-		'description' => t('Subfield of Field "'.$field['field_name'].'".'),
+		'description' => t('Subfield of Field "' . $field['field_name'] . '".'),
         //'sanitized' => TRUE,
         'getter callback' => 'entity_property_verbatim_get',
         'setter callback' => 'entity_property_verbatim_set',
         //'setter permission' => 'administer nodes',
         //'raw getter callback' => 'entity_property_verbatim_get',
     ),
-	/*
+    /*
     'format' => array(
         'type' => 'token',
         'label' => t('Text format'),
