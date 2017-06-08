@@ -126,7 +126,7 @@ function b2share_form_metadata($form, &$form_state) {
   $base_url = variable_get('b2share_url');
   $base_url = rtrim($base_url, '/') . '/';
   $url = '<a href="' . $base_url . 'api/communities' . '" target="_blank">' . $base_url.'api/communities </a>';
-  drupal_set_message(t('The communities on B2Share are listed here: ' . $url));
+  drupal_set_message(t('The communities on B2Share are listed here: ' .  check_plain(($url)));
 
   return system_settings_form($form);
 }
@@ -400,11 +400,11 @@ function b2share_ajax_submit(&$form, &$form_state) {
   // function for printing http codes and status messages
   function b2share_print_codes_messages($http_code_visible, $status_message_visible, $phase_string, $http_status, $output) {
     if ($http_code_visible == TRUE) {
-		drupal_set_message(t('The http status code for ' . $phase_string . ' is ' . $http_status));
+		drupal_set_message(t('The http status code for ' .  check_plain($phase_string) . ' is ' .  check_plain($http_status)));
     }
 
     if ($status_message_visible == TRUE) {
-      drupal_set_message(t('The status message for ' . $phase_string . ' is ' . $output));
+      drupal_set_message(t('The status message for ' .  check_plain($phase_string) . ' is ' .  check_plain($output)));
     }
 
     if ($http_status == 401) {
