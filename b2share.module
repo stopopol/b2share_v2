@@ -18,7 +18,7 @@ function b2share_menu() {
     'description'  => 'Settings for B2Share implementation module',
     'page callback'  => 'drupal_get_form',
     'page arguments'  => array('b2share_form'),
-    'access arguments'  => array('access administration pages'),
+    'access arguments' => array('administer site configuration'),
   );
 
   $items['admin/config/system/b2share/settings'] = array(
@@ -32,7 +32,7 @@ function b2share_menu() {
      'type' => MENU_LOCAL_TASK,
      'page callback'  => 'drupal_get_form',
      'page arguments'  => array('b2share_form_metadata'),
-     'access arguments' => array('access administration pages'),
+     'access arguments' => array('administer site configuration'),
    );
 
   return $items;
