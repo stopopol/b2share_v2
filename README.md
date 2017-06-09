@@ -1,4 +1,4 @@
-# b2share
+# B2Share
 Drupal module that implements the b2share rest api
 B2Share Module for Drupal 7
 
@@ -32,8 +32,7 @@ Usage
 	•	Creates new fieldtype called „B2Share Field“ 
 	with the widget „B2Share Widget“
 
-	•	Add a new field with the fieldtype „B2Share Field“ and the 
-	widget „B2Share Widget“ to a content type
+	•	Add a new field with the fieldtype „B2Share Field“ and the widget „B2Share Widget“ to a content type
 
 	•	This will enable a file upload/file modification interface
 
@@ -41,8 +40,7 @@ Usage
 
 	•	Hit "Deposit file on B2Share"
 
-	•	The formatter will just present the deposit URL at the moment
-	and likely PID of the uploaded file in the future
+	•	The formatter will just present the deposit URL at the moment and likely PID of the uploaded file in the future
 
 Features
 
