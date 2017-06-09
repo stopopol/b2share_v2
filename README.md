@@ -32,7 +32,8 @@ Usage
 	•	Creates new fieldtype called „B2Share Field“ 
 	with the widget „B2Share Widget“
 
-	•	Add a new field with the fieldtype „B2Share Field“ and the widget „B2Share Widget“ to a content type
+	•	Add a new field with the fieldtype „B2Share Field“ and 
+	the widget „B2Share Widget“ to a content type
 
 	•	This will enable a file upload/file modification interface
 
@@ -40,7 +41,8 @@ Usage
 
 	•	Hit "Deposit file on B2Share"
 
-	•	The formatter will just present the deposit URL at the moment and likely PID of the uploaded file in the future
+	•	The formatter will just present the deposit URL at the 
+	moment and likely PID of the uploaded file in the future
 
 Features
 
@@ -52,7 +54,9 @@ Tested with
 
 Technical documentation
 Adding a new fieldtype that is called b2share
-AJAX MUST be used, otherwise the buttons will always reload the page. No matter what.
-Before submitting a file you need to fill in name, date, author, … in DEIMS, which are going to be transmitted.
+AJAX MUST be used, otherwise the buttons will 
+always reload the page. No matter what.
+Before submitting a file you need to fill in name, 
+date, author, … in DEIMS, which are going to be transmitted.
 
 Format is a regular hyperlink to the data on b2share
