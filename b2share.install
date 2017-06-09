@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install function for the b2share module
+ * Install function for the b2share module.
  */
 
 /**
@@ -29,6 +29,6 @@ function b2share_field_schema($field) {
  * Implements hook_uninstall()
  */
 
-// Deletes created variables
+// Deletes created variables.
 function b2share_uninstall() {
 }
