@@ -46,7 +46,7 @@ Usage
 
 Features
 
-	• Integrates with tokens
+	• 	Integrates with tokens
 
 Tested with
 
